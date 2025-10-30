@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendário de Atividades</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f8f5;
+    }
+
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.4em;
+    }
+
+    #calendario {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 600px) {
+      #calendario {
+        width: 95%;
+        padding: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Calendário de Atividades Agrícolas</header>
+<div style="text-align: center; margin-top: 20px;">
+  <button onclick="window.location.href='index.html'" style="padding: 12px 20px; font-size: 1em; background-color: #1976d2; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    Voltar ao Portal
+  </button>
+</div>
+
+
+  <div id="calendario"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendario');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'pt-br',
+        height: 'auto',
+        events: [
+          { title: 'Pulverização Milho', start: '2025-10-30' },
+          { title: '', start: '2025-11-02' },
+          { title: 'Aplicação de fertilizante', start: '2025-11-05' }
+        ]
+      });
+      calendar.render();
+    });
+  </script>
+</body>
+</html>

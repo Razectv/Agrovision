@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agrotech Cálculo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: black;
+    }
+
+    h1 {
+      color: #2e7d32;
+      font-size: 1.5em;
+      text-align: center;
+    }
+
+    select, input[type="number"], button {
+      margin: 5px 0;
+      width: 100%;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    .talhoes, .produtos, .resultado {
+      margin-top: 20px;
+    }
+
+    .botao-talhao {
+      display: block;
+      margin: 5px 0;
+      padding: 10px;
+      background: #e0f2f1;
+      border: 1px solid #009688;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .botao-talhao.selecionado {
+      background: #80cbc4;
+    }
+
+    .hectare-info {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .produto-item {
+      margin: 5px 0;
+      padding: 5px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .produto-item button {
+      float: right;
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    @media (min-width: 600px) {
+      .botao-talhao {
+        display: inline-block;
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* 30% visível */
+    z-index: -1;
+  }
+</style>
+<body>
+<div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
+<div style="text-align: center; margin-top: 30px;">
+  <a href="index.html" style="
+    display: inline-block;
+    background-color: white;
+    color: black;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1em;
+  ">🔙 Voltar para o Portal</a>
+</div>
+  <h1>🌿 Agrotech Cálculo de Aplicação</h1>
+
+  <label for="fazenda">Selecione a fazenda:</label>
+  <select id="fazenda" onchange="mostrarTalhoes()">
+    <option value="">-- Escolha --</option>
+    <option value="karoline">Fazenda Karoline</option>
+    <option value="talisma">Fazenda Talismã</option>
+  </select>
+
+  <div class="talhoes" id="talhoes"></div>
+
+  <div class="produtos">
+    <h2>🧪 Produtos</h2>
+    <select id="produtoSelect">
+<option value="">-- Selecione o produto --</option>
+<option value="AFIADO">AFIADO</option>
+<option value="AGREGUS">AGREGUS</option>
+<option value="ACEMIP">ACEMIP</option>
+<option value="ADVER">ADVER</option>
+<option value="BOVERIL">BOVERIL</option>
+<option value="CARNADINE">CARNADINE</option>
+<option value="DIMILIN">DIMILIN</option>
+<option value="GALIL PR">GALIL PR</option>
+<option value="HERO BR">HERO BR</option>
+<option value="LUFENURON">LUFENURON</option>
+<option value="MACH EC">MACH EC</option>
+<option value="IMUNIT">IMUNIT</option>
+<option value="PIRIPROXIFEN">PIRIPROXIFEN</option>
+<option value="VERTIMEC">VERTIMEC</option>
+<option value="TERRA FORTE">TERRA FORTE</option>
+<option value="EXPEDITION">EXPEDITION</option>
+<option value="BAZUKA">BAZUKA</option>
+<option value="AGRIPON SOLUTION">AGRIPON SOLUTION</option>
+<option value="AMINOMAX">AMINOMAX</option>
+<option value="CENTRUM">CENTRUM</option>
+<option value="CROP BP">CROP BP</option>
+<option value="CROP SECK">CROP SECK</option>
+<option value="CROP SPIL">CROP SPIL</option>
+<option value="CROP OIL">CROP OIL</option>
+<option value="FERTILIZANTE PERFORMAPRO">FERTILIZANTE PERFORMAPRO</option>
+<option value="FERTILIZANTE MINERAL">FERTILIZANTE MINERAL</option>
+<option value="NUVITA MAGNESIO ULTRA">NUVITA MAGNESIO ULTRA</option>
+<option value="SHERIFE">SHERIFE</option>
+<option value="STARTER MANGANES">STARTER MANGANES</option>
+<option value="PLATINUN ROOTLAND">PLATINUN ROOTLAND</option>
+<option value="SOLUÇÃO NIITROGENADA">SOLUÇÃO NIITROGENADA</option>
+<option value="PORTERO HARVEST">PORTERO HARVEST</option>
+<option value="GUEPARDO">GUEPARDO</option>
+<option value="ASGARD">ASGARD</option>
+<option value="IMPACT HARVEST">IMPACT HARVEST</option>
+<option value="APEX STIMULLUM">APEX STIMULLUM</option>
+<option value="ADVANCED APROACH POWER">ADVANCED APROACH POWER</option>
+<option value="MIRAVIS PRO">MIRAVIS PRO</option>
+<option value="BRAVONIL">BRAVONIL</option>
+<option value="FUSÃO">FUSÃO</option>
+<option value="ACROSS">ACROSS</option>
+<option value="CERTEZA N">CERTEZA N</option>
+<option value="TRIDIUM">TRIDIUM</option>
+<option value="CYPRESS 20L">CYPRESS 20L</option>
+<option value="MITRION">MITRION</option>
+<option value="ATUMUS">ATUMUS</option>
+<option value="BRANDT MANI PLEX">BRANDT MANI PLEX</option>
+<option value="DROPON">DROPON</option>
+<option value="ELMO NITROFIX">ELMO NITROFIX</option>
+<option value="BRANDT TRITEK">BRANDT TRITEK</option>
+<option value="BIOKILLER">BIOKILLER</option>
+<option value="BRANDT ULTRANO 05 LT">BRANDT ULTRANO 05 LT</option>
+<option value="BASAGRAN 600">BASAGRAN 600</option>
+<option value="CLORIMORUM">CLORIMORUM</option>
+<option value="DUAL GOLD">DUAL GOLD</option>
+<option value="DK MAX">DK MAX</option>
+<option value="LUBAQUAT">LUBAQUAT</option>
+<option value="DESSICASH">DESSICASH</option>
+<option value="FINALE">FINALE</option>
+<option value="FRENO">FRENO</option>
+<option value="GLUFOSINATO DE AMONIA">GLUFOSINATO DE AMONIA</option>
+<option value="BRADDOCK">BRADDOCK</option>
+<option value="GLYPHOTAL WG">GLYPHOTAL WG</option>
+<option value="GRANT">GRANT</option>
+<option value="OSBAR">OSBAR</option>
+<option value="ZAP QI">ZAP QI</option>
+<option value="ZETHAMAX">ZETHAMAX</option>
+<option value="PACTO">PACTO</option>
+<option value="VERDICT MAX">VERDICT MAX</option>
+<option value="TRUNFO">TRUNFO</option>
+<option value="TOPINAM VPR PRO">TOPINAM VPR PRO</option>
+<option value="YAMATO">YAMATO</option>
+<option value="SONDA HT">SONDA HT</option>
+<option value="ARKEIRO">ARKEIRO</option>
+<option value="GRAP NOD">GRAP NOD</option>
+<option value="MASTERFIX SOJA">MASTERFIX SOJA</option>
+<option value="MASTERFIX AZOSPIRILUM">MASTERFIX AZOSPIRILUM</option>
+<option value="AGRIPON SOYBACTER">AGRIPON SOYBACTER</option>
+<option value="AGRIPON CLOCK EVOLUTION">AGRIPON CLOCK EVOLUTION</option>
+<option value="AGRIPON ALGORITIMO EXCELL">AGRIPON ALGORITIMO EXCELL</option>
+
+      <option value="">-- Selecione o produto --</option>
+      <!-- Aqui virão todos os produtos reais que você me passou -->
+    </select>
+    <input type="number" id="doseProduto" placeholder="Dose L/ha">
+    <button onclick="adicionarProduto()">Adicionar produto</button>
+    <div id="listaProdutos"></div>
+  </div>
+
+  <div class="resultado" id="resultado"></div>
+  <script>
+    const dados = {
+      karoline: {
+        "Pivô 1": 85, "Pivô 2": 120, "T_1": 37, "T_2": 46.6, "T_3": 64.3, "T_4": 37.6,
+        "T_5": 103.8, "T_6": 7.6, "T_7": 25.6, "T_8": 9.3, "T_9": 33.8, "T_10": 11,
+        "T_11": 64.8, "T_12": 33.8, "T_13": 41.1, "T_14": 59.5, "T_15": 92, "T_16": 67.6,
+        "T_17": 76.2, "T_18": 45, "T_19": 100, "T_20": 33.9, "T_21": 33.2, "T_22": 253.2,
+        "T_23": 20.2, "T_24": 102.4, "T_25": 33.9, "T_26": 30.4
+      },
+      talisma: {
+        "T_1": 311.3, "T_2": 53.1, "T_3": 44.2, "T_4": 43.5, "T_5": 49.0, "T_6": 12.4,
+        "T_7": 17.2, "T_8": 27.3, "T_9": 53.6, "T_10": 128.3, "T_11": 52.2, "T_12": 42.1,
+        "T_13": 38.6, "T_14": 20.8, "T_15": 215.8, "T_16": 30.1, "T_17": 31.4, "T_18": 31.4,
+        "T_19": 32.2, "T_20": 71.9, "T_21": 136.0
+      }
+    };
+
+    let talhoesSelecionados = [];
+    let produtos = [];
+
+    function mostrarTalhoes() {
+      const fazenda = document.getElementById("fazenda").value;
+      const div = document.getElementById("talhoes");
+      div.innerHTML = "";
+      talhoesSelecionados = [];
+
+      if (!fazenda) return;
+
+      for (const [nome, ha] of Object.entries(dados[fazenda])) {
+        const btn = document.createElement("div");
+        btn.className = "botao-talhao";
+        btn.innerHTML = `<strong>${nome}</strong><div class="hectare-info">${ha} ha</div>`;
+        btn.onclick = () => {
+          if (talhoesSelecionados.includes(nome)) {
+            talhoesSelecionados = talhoesSelecionados.filter(t => t !== nome);
+            btn.classList.remove("selecionado");
+          } else {
+            talhoesSelecionados.push(nome);
+            btn.classList.add("selecionado");
+          }
+          calcular();
+        };
+        div.appendChild(btn);
+      }
+    }
+
+    function adicionarProduto() {
+      const nome = document.getElementById("produtoSelect").value;
+      const dose = parseFloat(document.getElementById("doseProduto").value);
+      if (!nome || isNaN(dose)) return;
+
+      if (produtos.length >= 10) {
+        alert("Limite de 10 produtos atingido.");
+        return;
+      }
+
+      produtos.push({ nome, dose });
+      atualizarListaProdutos();
+      calcular();
+    }
+
+    function removerProduto(index) {
+      produtos.splice(index, 1);
+      atualizarListaProdutos();
+      calcular();
+    }
+
+    function atualizarListaProdutos() {
+      const div = document.getElementById("listaProdutos");
+      div.innerHTML = "";
+      produtos.forEach((p, i) => {
+        const item = document.createElement("div");
+        item.className = "produto-item";
+        item.innerHTML = `${p.nome} - ${p.dose} L/ha <button onclick="removerProduto(${i})">Remover</button>`;
+        div.appendChild(item);
+      });
+    }
+
+    function calcular() {
+      const fazenda = document.getElementById("fazenda").value;
+      if (!fazenda || talhoesSelecionados.length === 0 || produtos.length === 0) {
+        document.getElementById("resultado").innerHTML = "";
+        return;
+      }
+
+      let areaTotal = 0;
+      talhoesSelecionados.forEach(t => {
+        areaTotal += dados[fazenda][t];
+      });
+
+      let html = `<h2>📊 Resultado</h2>`;
+      html += `<p>Área total selecionada: <strong>${areaTotal.toFixed(2)} ha</strong></p>`;
+
+      produtos.forEach(p => {
+  const volume = p.dose * areaTotal;
+  html += `<p><strong>${p.nome}</strong>: ${volume.toFixed(2)} L</p>`;
+});
+
+
+      document.getElementById("resultado").innerHTML = html;
+    }
+  </script>
+</body>
+</html>

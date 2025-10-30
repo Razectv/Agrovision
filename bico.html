@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Calibração</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f0f8f5;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      font-size: 1.4em;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      background-color: #2e7d32;
+      cursor: pointer;
+    }
+
+    button.clear {
+      background-color: #888;
+    }
+
+    .result {
+      margin-top: 25px;
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.95em;
+    }
+
+    th {
+      background-color: #c8e6c9;
+    }
+
+    .alerta {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #d32f2f;
+    }
+
+    .ok {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora de Calibração</h1>
+<div class="buttons">
+  <button class="clear" onclick="limpar()">Limpar</button>
+  <button onclick="window.location.href='index.html'">Voltar ao Portal</button>
+</div>
+
+
+  <div class="form-group">
+    <label>Velocidade de trabalho (km/h):</label>
+    <input type="number" id="velocidade" step="0.1">
+  </div>
+
+  <div class="row">
+    <div class="form-group">
+      <label>Dose desejada (L/ha):</label>
+      <input type="number" id="dose" step="0.1">
+    </div>
+    <div class="form-group">
+      <label>Espaçamento entre bicos (cm):</label>
+      <input type="number" id="espacamento" step="0.1">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group">
+      <label>Pressão de referência (PSI):</label>
+      <input type="number" id="pressaoRef" step="0.1">
+    </div>
+    <div class="form-group">
+      <label>Vazão medida por bico (L/min):</label>
+      <input type="number" id="vazaoMedida" step="0.01">
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="calcular()">Calcular calibração</button>
+    <button class="clear" onclick="limpar()">Limpar</button>
+  </div>
+
+  <div class="result" id="resultado"></div>
+
+  <script>
+    function calcular() {
+      const velocidade = parseFloat(document.getElementById('velocidade').value) || 0;
+      const dose = parseFloat(document.getElementById('dose').value) || 0;
+      const espacamento = parseFloat(document.getElementById('espacamento').value) || 0;
+      const pressaoRef = parseFloat(document.getElementById('pressaoRef').value) || 0;
+      const vazaoMedida = parseFloat(document.getElementById('vazaoMedida').value) || 0;
+
+      const vazaoIdeal = (velocidade * dose * espacamento) / 60000;
+      let pressaoSugerida = null;
+      let diferencaVazao = null;
+      let diferencaPressao = null;
+      let alerta = "";
+
+      if (pressaoRef > 0 && vazaoMedida > 0) {
+        pressaoSugerida = pressaoRef * Math.pow(vazaoIdeal / vazaoMedida, 2);
+        diferencaVazao = ((vazaoMedida - vazaoIdeal) / vazaoIdeal) * 100;
+        diferencaPressao = ((pressaoRef - pressaoSugerida) / pressaoSugerida) * 100;
+
+        if (Math.abs(diferencaVazao) > 5) {
+          alerta = `<div class="alerta">⚠️ Vazão fora da tolerância de 5%. Verifique a pressão ou o estado dos bicos.</div>`;
+        } else {
+          alerta = `<div class="ok">✅ Vazão dentro da faixa aceitável. Pulverizador calibrado.</div>`;
+        }
+      }
+
+      let html = `<strong>Vazão ideal por bico:</strong> ${vazaoIdeal.toFixed(3)} L/min<br>`;
+      if (pressaoSugerida !== null) {
+        html += `<strong>Pressão sugerida (aprox.):</strong> ${pressaoSugerida.toFixed(0)} PSI`;
+
+        html += `
+          <h3>Comparação com medição real:</h3>
+          <table>
+            <tr>
+              <th>Parâmetro</th>
+              <th>Valor Ideal</th>
+              <th>Valor Medido</th>
+              <th>Diferença (%)</th>
+            </tr>
+            <tr>
+              <td>Vazão</td>
+              <td>${vazaoIdeal.toFixed(3)}</td>
+              <td>${vazaoMedida.toFixed(2)}</td>
+              <td>${diferencaVazao.toFixed(2)}%</td>
+            </tr>
+            <tr>
+              <td>Pressão</td>
+              <td>${pressaoSugerida.toFixed(0)}</td>
+              <td>${pressaoRef.toFixed(0)}</td>
+              <td>${diferencaPressao.toFixed(2)}%</td>
+            </tr>
+          </table>
+        `;
+      }
+
+      html += alerta;
+      document.getElementById('resultado').innerHTML = html;
+    }
+
+    function limpar() {
+      document.querySelectorAll('input').forEach(input => input.value = '');
+      document.getElementById('resultado').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

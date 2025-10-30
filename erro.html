@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Consulta de Códigos - Uniport / Adubação</title>
+<style>
+  :root{--bg:#f6f7fb;--card:#fff;--accent:black;--text:#111}
+  body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:var(--bg);color:var(--text)}
+  header{background:var(--accent);color:white;padding:18px 16px}
+  h1{margin:0;font-size:18px}
+  .wrap{max-width:820px;margin:18px auto;padding:12px}
+  .card{background:var(--card);border-radius:10px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  .searchRow{display:flex;gap:8px}
+  input[type="number"]{flex:1;padding:10px 12px;border:1px solid #e3e7ee;border-radius:8px;font-size:16px}
+  button{background:var(--accent);border:none;color:white;padding:10px 14px;border-radius:8px;font-weight:600}
+  .result{margin-top:12px;padding:12px;border-left:4px solid var(--accent);background:#fffbea;border-radius:6px}
+  .code{font-weight:700;font-size:20px}
+  .module{font-weight:600;margin-top:6px}
+  .listTitle{margin-top:18px;font-weight:700}
+  .codesList{max-height:380px;overflow:auto;margin-top:8px;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+  .item{background:#fff;padding:10px;border-radius:8px;border:1px solid #eef2f6;font-size:13px}
+  .small{font-size:12px;color:#555;margin-top:6px}
+  footer{padding:16px;text-align:center;color:#666;font-size:13px}
+  @media(min-width:900px){ .wrap{padding:24px} }
+</style>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg'); /* nome exato da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* visibilidade ajustável */
+    z-index: -1;
+  }
+</style>
+
+<body>
+<body>
+  <div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
+
+<body>
+<header>
+  <div style="max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between">
+    <h1>Consulta de Códigos — Uniport / Adubação</h1>
+<div style="text-align: center; margin-top: 30px;">
+  <a href="index.html" style="
+    display: inline-block;
+    background-color: white;
+    color: black;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1em;
+  ">🔙 Voltar para o Portal</a>
+</div>
+
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div style="margin-bottom:8px">Digite o <strong>código</strong> (ex.: <em>2808</em>) e pressione Buscar</div>
+    <div class="searchRow">
+      <input id="codigo" type="number" placeholder="Digite o código (somente números)" />
+      <button id="btn" onclick="buscar()">Buscar</button>
+    </div>
+
+    <div id="resultado" class="result" style="display:none"></div>
+
+    <div class="listTitle">Lista de códigos (toque para ver)</div>
+    <div class="codesList" id="lista"></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div style="font-size:14px">Observação: as descrições são extraídas das tabelas do manual (módulos Veículo / Veículo+ / Adubação / Transmissão / Implemento). Use como referência para diagnóstico inicial.</div>
+  </div>
+</div>
+
+<footer>Gerado localmente — salve como <strong>index.html</strong> e abra no navegador.</footer>
+
+<script>
+/*
+  Banco de códigos extraído das imagens fornecidas.
+  Cada entrada: código -> { module, possible }
+  (texto resumido / fiel às imagens)
+*/
+const codigos = {
+  // Módulo T1ES Veículo (trecho imagem)
+  "1000":  {module:"T1ES Veículo", possible:"Veículo - Falha de carga da bateria"},
+  "1011":  {module:"T1ES Veículo", possible:"Veículo - Temperatura alta do óleo hidráulico"},
+  "1012":  {module:"T1ES Veículo", possible:"Veículo - Falha no sensor de temperatura do óleo hidráulico"},
+  "1020":  {module:"T1ES Veículo", possible:"Veículo - Piloto automático desacoplado / máquina fora do modo trabalho"},
+  "2000":  {module:"T1ES Veículo", possible:"Veículo - Temperatura alta do fluído de arrefecimento do motor"},
+  "2001":  {module:"T1ES Veículo", possible:"Veículo - Nível baixo fluído de arrefecimento do motor"},
+  "2003":  {module:"T1ES Veículo", possible:"Veículo - Pressão baixa do óleo lubrificante do motor"},
+  "2007":  {module:"T1ES Veículo", possible:"Veículo - Tensão alta módulo do motor"},
+  "2008":  {module:"T1ES Veículo", possible:"Veículo - Tensão baixa módulo do motor"},
+  "2009":  {module:"T1ES Veículo", possible:"Veículo - Água no combustível"},
+  "4000":  {module:"T1ES Veículo", possible:"Módulo veículo - Erro tensão alta"},
+  "4001":  {module:"T1ES Veículo", possible:"Módulo veículo - Erro tensão baixa"},
+  "4002":  {module:"T1ES Veículo", possible:"Veículo - Falha de comunicação com display"},
+  "18125": {module:"T1ES Veículo", possible:"Módulo adubação - Erro de posicionamento atuador do tribord"},
+  "18126": {module:"T1ES Veículo", possible:"Módulo adubação - Corrente máxima ao acionar atuador de tribord"},
+  "32002": {module:"T1ES Veículo", possible:"Módulo veículo - Erro de comunicação com módulo veículo+"},
+  "32003": {module:"T1ES Veículo", possible:"Módulo veículo - Erro de comunicação com módulo implemento"},
+  "32004": {module:"T1ES Veículo", possible:"Módulo veículo - Erro de comunicação com módulo hidrostático"},
+  "32005": {module:"T1ES Veículo", possible:"Módulo veículo - Erro de comunicação com motor diesel"},
+
+  // Módulo T1ES+ Veículo (trecho imagem)
+  "1002": {module:"T1ES+ Veículo", possible:"Curto-circuito sensores roda"},
+  "1003": {module:"T1ES+ Veículo", possible:"Curto-circuito sensor escada"},
+  "1004": {module:"T1ES+ Veículo", possible:"Veículo - Escada abaixada"},
+  "1010": {module:"T1ES+ Veículo", possible:"Veículo - Nível baixo do óleo hidráulico"},
+  "1013": {module:"T1ES+ Veículo", possible:"Veículo - Filtro de óleo hidráulico obstruído"},
+  "2002": {module:"T1ES+ Veículo", possible:"Veículo - Filtro de ar do motor diesel obstruído"},
+  "32007":{module:"T1ES+ Veículo", possible:"Módulo veículo+ - Erro de comunicação com módulo veículo"},
+  "32008":{module:"T1ES+ Veículo", possible:"Módulo veículo+ - Erro de comunicação com módulo implemento"},
+
+  // Módulo T1M Adubação (Implemento) - principais códigos das imagens
+  "1008":  {module:"T1ES Adubo", possible:"Veículo - Erro de memória calibração velocidade"},
+  "18000": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória dose A"},
+  "18001": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória dose B"},
+  "18004": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória volume da caçamba"},
+  "18046": {module:"T1ES Adubo", possible:"Módulo adubação - Nível mínimo caçamba de adubo"},
+  "18047": {module:"T1ES Adubo", possible:"Módulo adubação - Controle utilizando velocidade mínima"},
+  "18048": {module:"T1ES Adubo", possible:"Módulo adubação - Abrindo portas para adubação"},
+  "18080": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória constante da esteira"},
+  "18081": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória constante da porta esquerda"},
+  "18082": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória constante da porta direita"},
+  "18083": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de montagem sensor da porta direita"},
+  "18084": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de montagem sensor da porta esquerda"},
+  "18085": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de controle esteira"},
+  "18086": {module:"T1ES Adubo", possible:"Módulo adubação - Erro sensor esteira"},
+  "18087": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de controle discos"},
+  "18088": {module:"T1ES Adubo", possible:"Módulo adubação - Erro sensor discos"},
+  "18089": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de controle porta direita"},
+  "18090": {module:"T1ES Adubo", possible:"Módulo adubação - Erro sensor porta direita"},
+  "18091": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de controle porta esquerda"},
+  "18092": {module:"T1ES Adubo", possible:"Módulo adubação - Erro sensor porta esquerda"},
+  "18093": {module:"T1ES Adubo", possible:"Módulo adubação - Limite mínimo esteira"},
+  "18094": {module:"T1ES Adubo", possible:"Módulo adubação - Limite máximo esteira"},
+  "18095": {module:"T1ES Adubo", possible:"Módulo adubação - Limite mínimo discos"},
+  "18096": {module:"T1ES Adubo", possible:"Módulo adubação - Limite máximo discos"},
+  "18097": {module:"T1ES Adubo", possible:"Módulo adubação - Dose mínima"},
+  "18098": {module:"T1ES Adubo", possible:"Módulo adubação - Dose máxima"},
+  "18099": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória perfil ativo"},
+  "18100": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória densidade"},
+  "18101": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória faixa de aplicação"},
+  "18102": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória redutor ativo"},
+  "18103": {module:"T1ES Adubo", possible:"Módulo adubação - Chave descarregar acionada"},
+  "18104": {module:"T1ES Adubo", possible:"Módulo adubação - Máquina fora do modo trabalho"},
+  "18105": {module:"T1ES Adubo", possible:"Módulo adubação - Alterar redução para atingir dose desejada"},
+  "18106": {module:"T1ES Adubo", possible:"Módulo adubação - Filtro de óleo dos discos obstruído"},
+  "18107": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória tipo de produto"},
+  "18108": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória ponto de queda"},
+  "18121": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de memória modelo de pás"},
+  "18122": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de posicionamento atuador ponto de queda direito"},
+  "18123": {module:"T1ES Adubo", possible:"Módulo adubação - Erro de posicionamento atuador ponto de queda esquerdo"},
+  "18124": {module:"T1ES Adubo", possible:"Módulo adubação - Corrente máxima ao acionar atuador de ponto de queda"},
+
+  // Implemento / Comunicação
+  "33000": {module:"T1ES Adubo", possible:"Módulo do implemento - Erro de comunicação com módulo veículo+"},
+  "33001": {module:"T1ES Adubo", possible:"Módulo do implemento - Erro de comunicação com módulo veículo"},
+  "33002": {module:"T1ES Adubo", possible:"Módulo do implemento - Erro de comunicação com módulo hidrostático"},
+  "33003": {module:"T1ES Adubo", possible:"Módulo do implemento - Erro de comunicação com display"},
+
+  // Falhas Módulo Transmissão (trecho)
+  "1006": {module:"Hidrostático Sauer", possible:"Veículo - Falha luz de freio"},
+  "1007": {module:"Hidrostático Sauer", possible:"Veículo - Falha luz de ré"},
+  "1009": {module:"Hidrostático Sauer", possible:"Veículo - Erro chave de neutro"},
+  "1016": {module:"Hidrostático Sauer", possible:"Veículo - Erro sensor velocidade roda traseira esquerda"},
+  "1017": {module:"Hidrostático Sauer", possible:"Veículo - Erro sensor velocidade roda traseira direita"},
+  "1018": {module:"Hidrostático Sauer", possible:"Veículo - Erro sensor velocidade roda dianteira esquerda"},
+  "1019": {module:"Hidrostático Sauer", possible:"Veículo - Erro sensor velocidade roda dianteira direita"},
+
+  // Código de adubação/atuadores que você citou antes (exemplo)
+  "2808": {module:"Módulo Adubação / Atuadores", possible:"Variação / falha momentânea nos atuadores (corrente, posicionamento ou sinal) — verificar atuadores, chicotes e sensores de feedback"},
+
+  // adicionei alguns códigos comuns das imagens (caso adicional)
+  "18125": {module:"T1ES Veículo", possible:"Módulo adubação - Erro de posicionamento atuador do tribord"},
+  "18126": {module:"T1ES Veículo", possible:"Módulo adubação - Corrente máxima ao acionar atuador de tribord"},
+  // (se precisar, podemos acrescentar mais)
+};
+
+// monta a lista clicável
+const listaEl = document.getElementById('lista');
+Object.keys(codigos).sort((a,b)=>Number(a)-Number(b)).forEach(c=>{
+  const it = document.createElement('div');
+  it.className = 'item';
+  it.innerHTML = `<div class="code">${c}</div><div class="small"><strong>${codigos[c].module}</strong></div><div class="small">${codigos[c].possible}</div>`;
+  it.onclick = ()=>{ showResult(c); window.scrollTo({top:0,behavior:'smooth'}); }
+  listaEl.appendChild(it);
+});
+
+function buscar(){
+  const code = document.getElementById('codigo').value.trim();
+  if(!code){ alert('Digite um código.'); return; }
+  showResult(code);
+}
+function showResult(code){
+  const out = document.getElementById('resultado');
+  const entry = codigos[code];
+  if(entry){
+    out.style.display='block';
+    out.innerHTML = `<div class="code">${code}</div><div class="module">${entry.module}</div>
+      <div style="margin-top:8px"><strong>Possível causa / descrição:</strong><div style="margin-top:6px">${entry.possible}</div></div>
+      <div style="margin-top:10px;font-size:13px;color:#444"><strong>Ações rápidas sugeridas:</strong>
+        <ul style="margin:8px 0 0 18px;padding:0">
+          <li>Verificar conexões e chicotes do módulo/atuador/sensor.</li>
+          <li>Inspecionar sensores de velocidade/rotação e atuadores (giro livre, sujeira, lubrificação).</li>
+          <li>Conferir tensão de alimentação e fusíveis do módulo.</li>
+          <li>Se persistir, registrar o horário e condições e contatar assistência técnica com o código.</li>
+        </ul>
+      </div>`;
+  } else {
+    out.style.display='block';
+    out.innerHTML = `<div class="code">${code}</div><div class="module">Código não cadastrado</div>
+    <div style="margin-top:8px;color:#555">Esse código não está na lista local. Você pode enviar o número e a tela (foto) que eu adiciono ao banco.</div>`;
+  }
+}
+</script>
+</body>
+</html>

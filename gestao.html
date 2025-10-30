@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agro Vision - Estoque</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: black;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background-color: gray;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: red;
+      color: white;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .categoria {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #eaf2f8;
+    }
+    .baixo-estoque {
+      background-color: #fdecea;
+      color: #c0392b;
+    }
+    .formulario {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .radio-group {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_PROJETO.firebaseapp.com",
+    projectId: "SEU_PROJETO",
+    appId: "SUA_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "login.html";
+    }
+  });
+</script>
+
+<div style="text-align: center; margin-top: 30px;">
+  <a href="index.html" style="
+    display: inline-block;
+    background-color: white;
+    color: black;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1em;
+  ">🔙 Voltar para o Portal</a>
+</div>
+  <h1>🌾 Painel de Estoque - Agro Vision</h1>
+  <div class="formulario">
+    <h3>Registrar Entrada/Saída</h3>
+    <input type="text" id="produto" placeholder="Nome do produto" />
+    
+    <select id="classe">
+      <option value="">Selecione a categoria</option>
+      <option value="HERBICIDA">🌿 Herbicida</option>
+      <option value="INOCULANTE">🧬 Inoculante</option>
+      <option value="INSETICIDA">🐛 Inseticida</option>
+      <option value="FOLIAR">🍃 Foliar</option>
+      <option value="FUNGICIDA">🦠 Fungicida</option>
+      <option value="ADJUVANTE">💧 Adjuvante</option>
+    </select>
+
+    <select id="unidade">
+      <option value="">Selecione a unidade</option>
+      <option value="LITRO">LITRO</option>
+      <option value="KG">KG</option>
+      <option value="DOSE">DOSE</option>
+      <option value="GRAMA">GRAMA</option>
+      <option value="SACA">SACA</option>
+      <option value="UN">UN</option>
+    </select>
+
+    <input type="number" id="quantidade" placeholder="Quantidade" />
+    <div class="radio-group">
+      <label><input type="radio" name="tipo" value="entrada" checked /> Entrada</label>
+      <label><input type="radio" name="tipo" value="saida" /> Saída</label>
+    </div>
+    <button onclick="registrarMovimentacao()">Registrar</button>
+  </div>
+
+  <input type="text" id="filtro" placeholder="🔍 Buscar produto..." oninput="filtrarTabela()" />
+  <div id="painel"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtGM4nmU8JLPN65_sE5kM0f2eZb0eFqk",
+      authDomain: "gestaofarms.firebaseapp.com",
+      projectId: "gestaofarms",
+      storageBucket: "gestaofarms.appspot.com",
+      messagingSenderId: "692074323991",
+      appId: "1:692074323991:web:3e6c1d7c9e4e6d6f3c6e7f",
+      measurementId: "G-KXFF423ELN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.registrarMovimentacao = async function () {
+      const produto = document.getElementById("produto").value.trim();
+      const classe = document.getElementById("classe").value.trim();
+      const unidade = document.getElementById("unidade").value.trim();
+      const quantidade = parseInt(document.getElementById("quantidade").value);
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+
+      if (!produto || !classe || !unidade || isNaN(quantidade)) {
+        alert("⚠️ Preencha todos os campos corretamente.");
+        return;
+      }
+
+      const valor = tipo === "entrada" ? quantidade : -quantidade;
+
+      try {
+        await addDoc(collection(db, "estoque"), {
+          produto,
+          classe,
+          unidade,
+          quantidade: valor,
+          tipo,
+          data: new Date().toISOString()
+        });
+
+        if (tipo === "entrada") {
+          alert(`✅ Entrada registrada: ${quantidade} ${unidade} de ${produto}`);
+        } else {
+          alert(`📤 Saída registrada: ${quantidade} ${unidade} de ${produto}`);
+        }
+
+        document.getElementById("produto").value = "";
+        document.getElementById("classe").value = "";
+        document.getElementById("unidade").value = "";
+        document.getElementById("quantidade").value = "";
+
+        carregarEstoque();
+      } catch (error) {
+        alert("❌ Erro ao registrar: " + error.message);
+      }
+    };
+
+    async function carregarEstoque() {
+      const snapshot = await getDocs(collection(db, "estoque"));
+      const dados = {};
+
+      snapshot.forEach(doc => {
+        const item = doc.data();
+        const nome = item.produto;
+        const classe = item.classe || "OUTRO";
+        const unidade = item.unidade || "UN";
+        const qtd = item.quantidade;
+
+        if (!dados[classe]) dados[classe] = {};
+        if (!dados[classe][nome]) dados[classe][nome] = { unidade, total: 0 };
+        dados[classe][nome].total += qtd;
+      });
+
+      let html = "";
+      for (const classe in dados) {
+        html += `<div class="categoria">${classe}</div>`;
+        html += `<table><tr><th>Produto</th><th>Unidade</th><th>Quantidade</th></tr>`;
+        for (const nome in dados[classe]) {
+          const item = dados[classe][nome];
+          const alerta = item.total <= 0 ? "baixo-estoque" : "";
+          html += `<tr class="${alerta}"><td>${nome}</td><td>${item.unidade}</td><td>${item.total}</td></tr>`;
+        }
+        html += `</table>`;
+      }
+
+      document.getElementById("painel").innerHTML = html;
+    }
+
+    function filtrarTabela() {
+      const termo = document.getElementById("filtro").value.toLowerCase();
+      const linhas = document.querySelectorAll("#painel table tr");
+
+      linhas.forEach((linha, index) => {
+        if (index === 0) return;
+        const texto = linha.textContent.toLowerCase();
+        linha.style.display = texto.includes(termo) ? "" : "none";
+      });
+    }
+
+    carregarEstoque();
+  </script>
+</body>
+</html>
