@@ -7,8 +7,8 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f47c20;
-      color: #000;
+      background-color: black;
+      color: white;
       padding: 10px;
       margin: 0;
     }
@@ -99,8 +99,32 @@
       font-size: 0.8em;
       margin-top: 30px;
     }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg'); /* nome exato da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* visibilidade ajustável */
+    z-index: -1;
+  }
+</style>
   </style>
 </head>
+<div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
 <body>
 <button onclick="window.location.href='index.html'">Voltar ao Portal</button>
   <header>
