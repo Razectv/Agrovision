@@ -9,7 +9,7 @@
       font-family: 'Segoe UI', sans-serif;
       background: black;
       padding: 20px;
-      color: #333;
+      color: white;
     }
     h1 {
       text-align: center;
@@ -21,7 +21,7 @@
       margin-bottom: 10px;
       font-size: 16px;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid black;
       background-color: gray;
     }
     button {
@@ -39,13 +39,13 @@
       font-weight: bold;
       margin-top: 30px;
       margin-bottom: 10px;
-      color: #2c3e50;
+      color: white;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
-      background: white;
+      background: gray;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     th, td {
@@ -54,14 +54,14 @@
       text-align: left;
     }
     th {
-      background-color: #eaf2f8;
+      background-color: black;
     }
     .baixo-estoque {
       background-color: #fdecea;
       color: #c0392b;
     }
     .formulario {
-      background: #fff;
+      background: black;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -72,7 +72,31 @@
     }
   </style>
 </head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* 30% visível */
+    z-index: -1;
+  }
+</style>
 <body>
+<div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
 <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
 <script>
@@ -105,7 +129,99 @@
   <h1>🌾 Painel de Estoque - Agro Vision</h1>
   <div class="formulario">
     <h3>Registrar Entrada/Saída</h3>
-    <input type="text" id="produto" placeholder="Nome do produto" />
+    <select id="produto">
+  <option value="">Selecione o produto</option>
+  <option value="AFIADO">AFIADO</option>
+  <option value="AGREGUS">AGREGUS</option>
+  <option value="ACEMIP">ACEMIP</option>
+  <option value="ADVER">ADVER</option>
+  <option value="BOVERIL">BOVERIL</option>
+  <option value="CARNADINE">CARNADINE</option>
+  <option value="DIMILIN">DIMILIN</option>
+  <option value="GALIL">GALIL</option>
+  <option value="PR">PR</option>
+  <option value="HERO BR">HERO BR</option>
+  <option value="LUFENURON">LUFENURON</option>
+  <option value="MACH EC">MACH EC</option>
+  <option value="IMUNIT">IMUNIT</option>
+  <option value="PIRIPROXIFEN">PIRIPROXIFEN</option>
+  <option value="VERTIMEC">VERTIMEC</option>
+  <option value="TERRA FORTE">TERRA FORTE</option>
+  <option value="EXPEDITION">EXPEDITION</option>
+  <option value="BAZUKA">BAZUKA</option>
+  <option value="AGRIPON SOLUTION">AGRIPON SOLUTION</option>
+  <option value="AMINOMAX">AMINOMAX</option>
+  <option value="CENTRUM">CENTRUM</option>
+  <option value="CROP BP">CROP BP</option>
+  <option value="CROP SECK">CROP SECK</option>
+  <option value="CROP SPIL">CROP SPIL</option>
+  <option value="CROP OIL">CROP OIL</option>
+  <option value="FERTILIZANTE">FERTILIZANTE</option>
+  <option value="PERFORMAPRO">PERFORMAPRO</option>
+  <option value="FERTILIZANTE MINERAL">FERTILIZANTE MINERAL</option>
+  <option value="NUVITA">NUVITA</option>
+  <option value="MAGNESIO ULTRA">MAGNESIO ULTRA</option>
+  <option value="SHERIFE">SHERIFE</option>
+  <option value="STARTER MANGANES">STARTER MANGANES</option>
+  <option value="PLATINUN">PLATINUN</option>
+  <option value="ROOTLAND">ROOTLAND</option>
+  <option value="SOLUÇÃO NIITROGENADA">SOLUÇÃO NIITROGENADA</option>
+  <option value="PORTERO">PORTERO</option>
+  <option value="HARVEST GUEPARDO">HARVEST GUEPARDO</option>
+  <option value="ASGARD IMPACT">ASGARD IMPACT</option>
+  <option value="HARVEST APEX">HARVEST APEX</option>
+  <option value="STIMULLUM ADVANCED">STIMULLUM ADVANCED</option>
+  <option value="APROACH POWER">APROACH POWER</option>
+  <option value="MIRAVIS PRO">MIRAVIS PRO</option>
+  <option value="BRAVONIL">BRAVONIL</option>
+  <option value="FUSÃO">FUSÃO</option>
+  <option value="ACROSS">ACROSS</option>
+  <option value="CERTEZA N">CERTEZA N</option>
+  <option value="TRIDIUM">TRIDIUM</option>
+  <option value="CYPRESS 20L">CYPRESS 20L</option>
+  <option value="MITRION">MITRION</option>
+  <option value="ATUMUS">ATUMUS</option>
+  <option value="BRANDT MANI PLEX">BRANDT MANI PLEX</option>
+  <option value="DROPON">DROPON</option>
+  <option value="ELMO">ELMO</option>
+  <option value="NITROFIX">NITROFIX</option>
+  <option value="BRANDT TRITEK">BRANDT TRITEK</option>
+  <option value="BIOKILLER">BIOKILLER</option>
+  <option value="BRANDT ULTRANO 05 LT">BRANDT ULTRANO 05 LT</option>
+  <option value="BASAGRAN 600">BASAGRAN 600</option>
+  <option value="CLORIMORUM">CLORIMORUM</option>
+  <option value="DUAL GOLD">DUAL GOLD</option>
+  <option value="DK MAX">DK MAX</option>
+  <option value="LUBAQUAT">LUBAQUAT</option>
+  <option value="DESSICASH">DESSICASH</option>
+  <option value="FINALE">FINALE</option>
+  <option value="FRENO">FRENO</option>
+  <option value="GLUFOSINATO DE AMONIA">GLUFOSINATO DE AMONIA</option>
+  <option value="BRADDOCK">BRADDOCK</option>
+  <option value="GLYPHOTAL WG">GLYPHOTAL WG</option>
+  <option value="GRANT">GRANT</option>
+  <option value="OSBAR">OSBAR</option>
+  <option value="ZAP QI">ZAP QI</option>
+  <option value="ZETHAMAX">ZETHAMAX</option>
+  <option value="PACTO">PACTO</option>
+  <option value="VERDICT MAX">VERDICT MAX</option>
+  <option value="TRUNFO">TRUNFO</option>
+  <option value="TOPINAM">TOPINAM</option>
+  <option value="VPR PRO">VPR PRO</option>
+  <option value="YAMATO">YAMATO</option>
+  <option value="SONDA HT">SONDA HT</option>
+  <option value="ARKEIRO">ARKEIRO</option>
+  <option value="GRAP NOD">GRAP NOD</option>
+  <option value="MASTERFIX SOJA">MASTERFIX SOJA</option>
+  <option value="MASTERFIX AZOSPIRILUM">MASTERFIX AZOSPIRILUM</option>
+  <option value="AGRIPON SOYBACTER">AGRIPON SOYBACTER</option>
+  <option value="AGRIPON CLOCK">AGRIPON CLOCK</option>
+  <option value="EVOLUTION">EVOLUTION</option>
+  <option value="AGRIPON ALGORITIMO">AGRIPON ALGORITIMO</option>
+  <option value="EXCELLENCE COLT">EXCELLENCE COLT</option>
+  <option value="PERMIT STAR">PERMIT STAR</option>
+</select>
+
     
     <select id="classe">
       <option value="">Selecione a categoria</option>
@@ -242,3 +358,5 @@
   </script>
 </body>
 </html>
+
+Atualizacao de layout e botoes
