@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Controle do Pulverizador</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 16px;
+      margin: auto;
+      font-size: 16px;
+      max-width: 360px;
+    }
+
+    h1 {
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    select, input, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 12px;
+      display: block;
+      box-sizing: border-box;
+    }
+
+    select {
+      background-color: white;
+      color: black;
+    }
+
+    button {
+      background-color: #2a7f62;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #246b54;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #222;
+      margin-bottom: 8px;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    #status {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+#area {
+  background-color: white;
+  color: black;
+}
+
+/* Estilo específico pro texto do placeholder */
+#area::placeholder {
+  color: black;
+  opacity: 1; /* garante que fique visível */
+}
+#tipo {
+  background-color: white;
+  color: black;
+}
+
+/* Estilo específico pro texto do placeholder */
+#tipo::placeholder {
+  color: black;
+  opacity: 1; /* garante que fique visível */
+}
+#data {
+  background-color: white;
+  color: black;
+}
+
+/* Estilo específico pro texto do placeholder */
+#data::placeholder {
+  color: black;
+  opacity: 1; /* garante que fique visível */
+}
+
+
+  </style>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* 30% visível */
+    z-index: -1;
+  }
+</style>
+<body>
+<div class="fundo"></div>
+
+  <!-- Seu conteúdo de login aqui -->
+  <h1>🚜 Controle do Pulverizador</h1>
+<div style="text-align: center; margin-top: 30px;">
+  <a href="index.html" style="
+    display: inline-block;
+    background-color: white;
+    color: black;
+    padding: 5px 24px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1em;
+  ">🔙 Voltar para o Portal</a>
+</div>
+<input type="text" id="area" style="margin-top: 16px;" />
+
+
+  <input type="text" id="area" placeholder="Área pulverizada" />
+
+  <select id="operador">
+    <option value="" disabled selected hidden>Operador</option>
+    <option value="Cezar">Cezar</option>
+    <option value="Vagner">Vagner</option>
+    <option value="Outro">Outro</option>
+  </select>
+
+  <input type="date" id="data" placeholder="Selecionar data" />
+  <input type="text" id="tipo" placeholder="Tipo de pulverização (ex: Inseticida)" />
+
+  <button onclick="registrarPulverizacao()">Registrar aplicação</button>
+  <button onclick="testarConexao()">🔍 Testar conexão</button>
+
+  <p id="status"></p>
+
+  <h2>📋 Registros</h2>
+  <ul id="lista-registros"></ul>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+      "https://tjxkbeonclcfcjigqbih.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqeGtiZW9uY2xjZmNqaWdxYmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4ODY2ODIsImV4cCI6MjA3NzQ2MjY4Mn0.i2RgKeaiOatHvRFZ4PLW39u1fDB025E_M7tA0rQRKC4"
+    );
+
+    async function registrarPulverizacao() {
+      const area = document.getElementById("area").value.trim();
+      const operador = document.getElementById("operador").value.trim();
+      const data = document.getElementById("data").value;
+      const tipo = document.getElementById("tipo").value.trim();
+      const status = document.getElementById("status");
+
+      if (!area || !operador || !data || !tipo) {
+        status.textContent = "⚠️ Preencha todos os campos!";
+        status.style.color = "orange";
+        return;
+      }
+
+      try {
+        const { error } = await supabase
+          .from("pulverizadores")
+          .insert([{ area, operador, data, tipo }]);
+
+        if (error) {
+          status.textContent = "❌ Erro ao salvar: " + error.message;
+          status.style.color = "red";
+        } else {
+          status.textContent = "✅ Aplicação registrada com sucesso!";
+          status.style.color = "lime";
+          document.getElementById("area").value = "";
+          document.getElementById("operador").value = "";
+          document.getElementById("data").value = "";
+          document.getElementById("tipo").value = "";
+          carregarRegistros();
+        }
+      } catch (err) {
+        status.textContent = "❌ Erro inesperado: " + err.message;
+        status.style.color = "red";
+      }
+    }
+
+    async function testarConexao() {
+      try {
+        const { data, error } = await supabase
+          .from("pulverizadores")
+          .select("*")
+          .limit(1);
+
+        if (error) {
+          alert("❌ Erro na conexão com Supabase: " + error.message);
+        } else {
+          alert("✅ Conexão com Supabase funcionando!");
+        }
+      } catch (err) {
+        alert("❌ Erro inesperado: " + err.message);
+      }
+    }
+
+    async function testeManual() {
+      try {
+        const { error } = await supabase
+          .from("pulverizadores")
+          .insert([{ area: "Talhão 7", operador: "Cezar", data: "2025-10-31", tipo: "Herbicida" }]);
+
+        if (error) {
+          alert("❌ Erro no teste manual: " + error.message);
+        } else {
+          alert("✅ Teste manual funcionou! Registro salvo.");
+          carregarRegistros();
+        }
+      } catch (err) {
+        alert("❌ Erro inesperado no teste manual: " + err.message);
+      }
+    }
+
+    async function carregarRegistros() {
+      const lista = document.getElementById("lista-registros");
+      lista.innerHTML = "";
+
+      try {
+        const { data, error } = await supabase
+          .from("pulverizadores")
+          .select("*")
+          .order("data", { ascending: false });
+
+        if (error) {
+          document.getElementById("status").textContent = "❌ Erro ao carregar registros.";
+          document.getElementById("status").style.color = "red";
+          return;
+        }
+
+        data.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `Área: ${item.area} | Operador: ${item.operador} | Tipo: ${item.tipo} | Data: ${item.data}`;
+          lista.appendChild(li);
+        });
+      } catch (err) {
+        document.getElementById("status").textContent = "❌ Erro inesperado ao carregar.";
+        document.getElementById("status").style.color = "red";
+      }
+    }
+
+    carregarRegistros();
+  </script>
+</body>
+</html>
