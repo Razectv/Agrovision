@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: #f0f8f5;
+      background: black;
     }
 
     header {
@@ -37,32 +37,57 @@
         padding: 5px;
       }
     }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* 30% visível */
+    z-index: -1;
+  }
+</style>
   </style>
 </head>
+<div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
 <body>
   <header>Calendário de Atividades Agrícolas</header>
-<div style="text-align: center; margin-top: 20px;">
-  <button onclick="window.location.href='index.html'" style="padding: 12px 20px; font-size: 1em; background-color: #1976d2; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    Voltar ao Portal
-  </button>
-</div>
 
+  <div style="text-align: center; margin-top: 20px;">
+    <button onclick="window.location.href='index.html'" style="padding: 12px 20px; font-size: 1em; background-color: #1976d2; color: white; border: none; border-radius: 5px; cursor: pointer;">
+      Voltar ao Portal
+    </button>
+  </div>
 
   <div id="calendario"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const calendarEl = document.getElementById('calendario');
+
+      // Recupera eventos salvos no navegador
+      const eventosSalvos = JSON.parse(localStorage.getItem("eventosCalendario")) || [];
+
       const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'pt-br',
         height: 'auto',
-        events: [
-          { title: 'Pulverização Milho', start: '2025-10-30' },
-          { title: '', start: '2025-11-02' },
-          { title: 'Aplicação de fertilizante', start: '2025-11-05' }
-        ]
+        events: eventosSalvos
       });
+
       calendar.render();
     });
   </script>
