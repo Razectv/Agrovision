@@ -252,6 +252,8 @@
   </div>
 
   <input type="text" id="filtro" placeholder="🔍 Buscar produto..." oninput="filtrarTabela()" />
+<button onclick="exportarCSV()">📥 Exportar Estoque (CSV)</button>
+
   <div id="painel"></div>
 
   <script type="module">
@@ -355,8 +357,34 @@
     }
 
     carregarEstoque();
+window.exportarCSV = async function () {
+  const snapshot = await getDocs(collection(db, "estoque"));
+  const linhas = [["Produto", "Categoria", "Unidade", "Quantidade", "Tipo", "Data"]];
+
+  snapshot.forEach(doc => {
+    const item = doc.data();
+    linhas.push([
+      item.produto,
+      item.classe,
+      item.unidade,
+      item.quantidade,
+      item.tipo,
+      item.data
+    ]);
+  });
+
+  const csvContent = linhas.map(e => e.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "estoque.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
   </script>
 </body>
 </html>
-
-Atualizacao de layout e botoes
