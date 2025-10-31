@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor de Eventos</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #121212;
+      font-family: 'Segoe UI', sans-serif;
+      color: #ffffff;
+    }
+
+    h2 {
+      text-align: center;
+      color: #00ffcc;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input[type="date"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2c2c2c;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00ffcc;
+      color: #000000;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #00e6b3;
+    }
+
+    #status {
+      margin-top: 16px;
+      text-align: center;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg'); /* nome exato da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* visibilidade ajustável */
+    z-index: -1;
+  }
+</style>
+  </style>
+</head>
+<div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
+<body>
+
+  <h2>📅 Adicionar Evento</h2>
+  <form id="formEvento">
+    <label for="dataEvento">Data:</label>
+    <input type="date" id="dataEvento" required />
+
+    <label for="descricaoEvento">Descrição:</label>
+    <input type="text" id="descricaoEvento" placeholder="Ex: Revisão do pulverizador" required />
+
+    <button type="submit">Salvar Evento</button>
+    <p id="status"></p>
+  </form>
+
+  <script>
+    document.getElementById("formEvento").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = document.getElementById("dataEvento").value;
+      const descricao = document.getElementById("descricaoEvento").value;
+
+      const novoEvento = { data, descricao };
+      const eventos = JSON.parse(localStorage.getItem("eventosCalendario")) || [];
+      eventos.push(novoEvento);
+      localStorage.setItem("eventosCalendario", JSON.stringify(eventos));
+
+      document.getElementById("status").textContent = "✅ Evento salvo!";
+      document.getElementById("formEvento").reset();
+    });
+  </script>
+
+</body>
+</html>
