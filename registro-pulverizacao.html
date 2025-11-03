@@ -100,6 +100,7 @@
 
   </style>
 </head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="manifest" href="manifest.json" />
 <link rel="stylesheet" href="style.css" />
 
@@ -149,6 +150,7 @@
 
   <h2>📋 Registros Salvos</h2>
 <button onclick="exportarCSV()">📤 Exportar Registros</button>
+<button onclick="gerarPDF()">📄 Gerar PDF</button>
 
   <div id="listaRegistros">🔄 Carregando registros...</div>
 
@@ -227,7 +229,12 @@
           btn.className = "btn-apagar";
           btn.innerHTML = "🗑️";
           btn.title = "Apagar registro";
-          btn.onclick = () => apagarRegistro(registroId);
+          btn.onclick = () => {
+  const confirmar = confirm("🗑️ Tem certeza que deseja apagar este registro?");
+  if (confirmar) {
+    apagarRegistro(registroId);
+  }
+};
 
           item.appendChild(content);
           item.appendChild(btn);
@@ -273,6 +280,35 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("✅ Service Worker registrado"))
     .catch(error => console.error("Erro ao registrar Service Worker:", error));
+}
+function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  firebase.database().ref("pulverizacoes").once("value", function(snapshot) {
+    if (!snapshot.exists()) {
+      alert("Nenhum registro para gerar PDF.");
+      return;
+    }
+
+    let y = 10;
+    doc.setFontSize(12);
+    doc.text("Relatório de Pulverizações", 10, y);
+    y += 10;
+
+    snapshot.forEach(function(childSnapshot) {
+      const r = childSnapshot.val();
+      const linha = `Operador: ${r.operador} | Data: ${r.data_aplicacao} | Talhão: ${r.talhao} | Tipo: ${r.tipo} | Fazenda: ${r.fazenda}`;
+      doc.text(linha, 10, y);
+      y += 10;
+      if (y > 280) {
+        doc.addPage();
+        y = 10;
+      }
+    });
+
+    doc.save("relatorio_pulverizacao.pdf");
+  });
 }
 
   </script>
