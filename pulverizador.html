@@ -2,105 +2,79 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Controle do Pulverizador</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Registro de Pulverização</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     body {
-      background-color: black;
-      color: white;
+      margin: 0;
+      padding: 20px;
+      background-color: #121212;
+      color: #fff;
       font-family: Arial, sans-serif;
-      padding: 16px;
-      margin: auto;
-      font-size: 16px;
-      max-width: 360px;
     }
-
-    h1 {
-      font-size: 20px;
+    h2 {
       text-align: center;
-      margin-bottom: 24px;
+      color: #00ffcc;
     }
-
-    select, input, button {
-      width: 100%;
-      padding: 12px;
-      font-size: 18px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 12px;
+    form {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    label {
       display: block;
-      box-sizing: border-box;
+      margin-top: 10px;
     }
-
-    select {
-      background-color: white;
-      color: black;
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: none;
+      background-color: #2c2c2c;
+      color: #fff;
     }
-
     button {
-      background-color: #2a7f62;
-      color: white;
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      background-color: #00ffcc;
+      color: #000;
       font-weight: bold;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
     }
-
-    button:hover {
-      background-color: #246b54;
+    .registro {
+      background-color: #1e1e1e;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      position: relative;
     }
-
-    ul {
-      list-style: none;
-      padding: 0;
+    .registro-content {
+      padding-right: 30px;
     }
-
-    li {
-      background-color: #222;
-      margin-bottom: 8px;
-      padding: 8px;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    #status {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 16px;
-    }
-#area {
-  background-color: white;
-  color: black;
+.registro {
+  position: relative;
+  padding: 20px 10px 15px 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background-color: #1e1e1e;
 }
-
-/* Estilo específico pro texto do placeholder */
-#area::placeholder {
-  color: black;
-  opacity: 1; /* garante que fique visível */
+    .btn-apagar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #ff4444;
+  font-size: 1.4rem;
+  cursor: pointer;
 }
-#tipo {
-  background-color: white;
-  color: black;
-}
-
-/* Estilo específico pro texto do placeholder */
-#tipo::placeholder {
-  color: black;
-  opacity: 1; /* garante que fique visível */
-}
-#data {
-  background-color: white;
-  color: black;
-}
-
-/* Estilo específico pro texto do placeholder */
-#data::placeholder {
-  color: black;
-  opacity: 1; /* garante que fique visível */
-}
-
-
-  </style>
-</head>
 <style>
   body {
     margin: 0;
@@ -123,149 +97,176 @@
     z-index: -1;
   }
 </style>
+
+  </style>
+</head>
 <body>
 <div class="fundo"></div>
 
   <!-- Seu conteúdo de login aqui -->
-  <h1>🚜 Controle do Pulverizador</h1>
-<div style="text-align: center; margin-top: 30px;">
-  <a href="index.html" style="
-    display: inline-block;
-    background-color: white;
-    color: black;
-    padding: 5px 24px;
-    text-decoration: none;
-    border-radius: 8px;
-    font-size: 1em;
-  ">🔙 Voltar para o Portal</a>
-</div>
+  <h2>🚜 Registro de Pulverização</h2>
 
-  <input type="text" id="area" placeholder="Área pulverizada" />
+  <form id="formPulverizacao">
+    <label for="operador">Operador:</label>
+    <select id="operador" required>
+      <option value="">Selecione</option>
+      <option value="Cezar">Cezar</option>
+      <option value="Vagner">Vagner</option>
+    </select>
 
-  <select id="operador">
-    <option value="" disabled selected hidden>Operador</option>
-    <option value="Cezar">Cezar</option>
-    <option value="Vagner">Vagner</option>
-    <option value="Outro">Outro</option>
-  </select>
+    <label for="data">Data da Aplicação:</label>
+    <input type="date" id="data" required />
 
-  <input type="date" id="data" placeholder="Selecionar data" />
-  <input type="text" id="tipo" placeholder="Tipo de pulverização (ex: Inseticida)" />
+    <label for="talhao">Talhão:</label>
+    <input type="text" id="talhao" required />
 
-  <button onclick="registrarPulverizacao()">Registrar aplicação</button>
-  <button onclick="testarConexao()">🔍 Testar conexão</button>
+    <label for="tipo">Tipo de Pulverização:</label>
+    <select id="tipo" required>
+      <option value="">Selecione</option>
+      <option value="Fungicida">Fungicida</option>
+      <option value="Herbicida">Herbicida</option>
+      <option value="Inseticida">Inseticida</option>
+      <option value="Adubo Foliar">Adubo Foliar</option>
+    </select>
 
-  <p id="status"></p>
+    <label for="fazenda">Fazenda:</label>
+    <select id="fazenda" required>
+      <option value="">Selecione</option>
+      <option value="Fazenda Karoline">Fazenda Karoline</option>
+      <option value="Fazenda Karoline 2">Fazenda Karoline 2</option>
+      <option value="Talismã">Talismã</option>
+    </select>
 
-  <h2>📋 Registros</h2>
-  <ul id="lista-registros"></ul>
+    <button type="submit">Salvar Registro</button>
+    <p id="status"></p>
+  </form>
 
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+  <label for="filtroOperador">🔍 Filtrar por Operador:</label>
+  <input type="text" id="filtroOperador" placeholder="Digite o nome..." />
 
-    const supabase = createClient(
-      "https://xfqcwguzpaxxmmubqqkn.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmcWN3Z3V6cGF4eG1tdWJxcWtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NjkzMzEsImV4cCI6MjA3NzM0NTMzMX0.DIxQy1IXyrcA_8dE6Q4VceghGCzYfcThrSuBp51CC-w"
-    );
+  <h2>📋 Registros Salvos</h2>
+<button onclick="exportarCSV()">📤 Exportar Registros</button>
 
-    async function registrarPulverizacao() {
-      const area = document.getElementById("area").value.trim();
-      const operador = document.getElementById("operador").value.trim();
-      const data = document.getElementById("data").value;
-      const tipo = document.getElementById("tipo").value.trim();
-      const status = document.getElementById("status");
+  <div id="listaRegistros">🔄 Carregando registros...</div>
 
-      if (!area || !operador || !data || !tipo) {
-        status.textContent = "⚠️ Preencha todos os campos!";
-        status.style.color = "orange";
-        return;
-      }
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD62fPpXYW4T-niex4aPR9Q-Crz_erWPDg",
+      authDomain: "usuarios-eaa3b.firebaseapp.com",
+      databaseURL: "https://usuarios-eaa3b-default-rtdb.firebaseio.com",
+      projectId: "usuarios-eaa3b",
+      storageBucket: "usuarios-eaa3b.appspot.com",
+      messagingSenderId: "1077971782430",
+      appId: "1:1077971782430:web:c0ddb52757d4ed020d170f"
+    };
 
-      try {
-        const { error } = await supabase
-          .from("pulverizadores")
-          .insert([{ area, operador, data, tipo }]);
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
+    document.getElementById("formPulverizacao").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const operador = document.getElementById("operador").value;
+      const data_aplicacao = document.getElementById("data").value;
+      const talhao = document.getElementById("talhao").value;
+      const tipo = document.getElementById("tipo").value;
+      const fazenda = document.getElementById("fazenda").value;
+
+      const novoRegistro = { operador, data_aplicacao, talhao, tipo, fazenda };
+
+      database.ref("pulverizacoes").push(novoRegistro, function(error) {
+        const status = document.getElementById("status");
         if (error) {
-          status.textContent = "❌ Erro ao salvar: " + error.message;
-          status.style.color = "red";
+          status.textContent = "❌ Erro ao salvar.";
+          status.style.color = "#ff4444";
         } else {
-          status.textContent = "✅ Aplicação registrada com sucesso!";
-          status.style.color = "lime";
-          document.getElementById("area").value = "";
-          document.getElementById("operador").value = "";
-          document.getElementById("data").value = "";
-          document.getElementById("tipo").value = "";
-          carregarRegistros();
+          status.textContent = "✅ Registro salvo com sucesso!";
+          status.style.color = "#00ffcc";
+          document.getElementById("formPulverizacao").reset();
         }
-      } catch (err) {
-        status.textContent = "❌ Erro inesperado: " + err.message;
-        status.style.color = "red";
-      }
-    }
+      });
+    });
 
-    async function testarConexao() {
-      try {
-        const { data, error } = await supabase
-          .from("pulverizadores")
-          .select("*")
-          .limit(1);
+    function carregarRegistros() {
+      const lista = document.getElementById("listaRegistros");
+      const filtroInput = document.getElementById("filtroOperador");
 
-        if (error) {
-          alert("❌ Erro na conexão com Supabase: " + error.message);
-        } else {
-          alert("✅ Conexão com Supabase funcionando!");
-        }
-      } catch (err) {
-        alert("❌ Erro inesperado: " + err.message);
-      }
-    }
+      function atualizarLista(snapshot) {
+        lista.innerHTML = "";
 
-    async function testeManual() {
-      try {
-        const { error } = await supabase
-          .from("pulverizadores")
-          .insert([{ area: "Talhão 7", operador: "Cezar", data: "2025-10-31", tipo: "Herbicida" }]);
-
-        if (error) {
-          alert("❌ Erro no teste manual: " + error.message);
-        } else {
-          alert("✅ Teste manual funcionou! Registro salvo.");
-          carregarRegistros();
-        }
-      } catch (err) {
-        alert("❌ Erro inesperado no teste manual: " + err.message);
-      }
-    }
-
-    async function carregarRegistros() {
-      const lista = document.getElementById("lista-registros");
-      lista.innerHTML = "";
-
-      try {
-        const { data, error } = await supabase
-          .from("pulverizadores")
-          .select("*")
-          .order("data", { ascending: false });
-
-        if (error) {
-          document.getElementById("status").textContent = "❌ Erro ao carregar registros.";
-          document.getElementById("status").style.color = "red";
+        if (!snapshot.exists()) {
+          lista.innerHTML = "<p class='loading'>⚠️ Nenhum registro encontrado.</p>";
           return;
         }
 
-        data.forEach(item => {
-          const li = document.createElement("li");
-          li.textContent = `Área: ${item.area} | Operador: ${item.operador} | Tipo: ${item.tipo} | Data: ${item.data}`;
-          lista.appendChild(li);
+        const filtro = filtroInput.value.toLowerCase();
+
+        snapshot.forEach(function(childSnapshot) {
+          const registro = childSnapshot.val();
+          const registroId = childSnapshot.key;
+
+          if (filtro && !registro.operador.toLowerCase().includes(filtro)) return;
+
+          const item = document.createElement("div");
+          item.className = "registro";
+
+          const content = document.createElement("div");
+          content.className = "registro-content";
+          content.innerHTML = `
+            <div><strong>👤 Operador:</strong> ${registro.operador}</div>
+            <div><strong>📅 Data:</strong> ${registro.data_aplicacao}</div>
+            <div><strong>🌱 Talhão:</strong> ${registro.talhao}</div>
+            <div><strong>🧪 Tipo:</strong> ${registro.tipo}</div>
+            <div><strong>🏡 Fazenda:</strong> ${registro.fazenda}</div>
+          `;
+
+          const btn = document.createElement("button");
+          btn.className = "btn-apagar";
+          btn.innerHTML = "🗑️";
+          btn.title = "Apagar registro";
+          btn.onclick = () => apagarRegistro(registroId);
+
+          item.appendChild(content);
+          item.appendChild(btn);
+          lista.appendChild(item);
         });
-      } catch (err) {
-        document.getElementById("status").textContent = "❌ Erro inesperado ao carregar.";
-        document.getElementById("status").style.color = "red";
       }
+
+      firebase.database().ref("pulverizacoes").on("value", atualizarLista);
+      filtroInput.addEventListener("input", () => {
+        firebase.database().ref("pulverizacoes").once("value").then(atualizarLista);
+      });
+    }
+
+    function apagarRegistro(id) {
+      firebase.database().ref("pulverizacoes/" + id).remove()
+        .then(() => console.log("🗑️ Registro apagado:", id))
+        .catch((error) => alert("❌ Erro ao apagar: " + error.message));
     }
 
     carregarRegistros();
+function exportarCSV() {
+  firebase.database().ref("pulverizacoes").once("value", function(snapshot) {
+    if (!snapshot.exists()) {
+      alert("Nenhum registro para exportar.");
+      return;
+    }
+
+    let csv = "Operador,Data,Talhão,Tipo,Fazenda\n";
+
+    snapshot.forEach(function(childSnapshot) {
+      const r = childSnapshot.val();
+      csv += `"${r.operador}","${r.data_aplicacao}","${r.talhao}","${r.tipo}","${r.fazenda}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "registros_pulverizacao.csv";
+    link.click();
+  });
+}
+
   </script>
 </body>
 </html>
