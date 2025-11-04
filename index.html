@@ -133,8 +133,47 @@
       <div class="item-icon">🧪</div>
       <div class="item-label">Bico Calibrador</div>
     </div>
-    <div id="botaoPulverizador" style="cursor:pointer; background:#f1f8e9; color:#000; padding:10px; border-radius:5px; text-align:center; font-weight:bold;">
+<!-- Botão -->
+<div id="botaoPulverizador" onclick="mostrarPIN()" style="
+  cursor: pointer;
+  background-color: #f1f8e9;
+  color: #000;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+">
   🔐 Acessar Registro do Pulverizador
+</div>
+
+<!-- Campo PIN flutuante -->
+<div id="popupPIN" style="
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 2px solid #00cc99;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  z-index: 999;
+  text-align: center;
+">
+  <p style="margin-bottom: 10px;">Digite o PIN:</p>
+  <input id="campoPIN" type="tel" inputmode="numeric" maxlength="4" style="
+    padding: 10px;
+    font-size: 18px;
+    width: 100px;
+    text-align: center;
+  " />
+  <br><br>
+  <button onclick="verificarPIN()">Entrar</button>
+  <button onclick="fecharPIN()" style="margin-left: 10px;">Cancelar</button>
 </div>
 
     <div class="item" onclick="abrir('erro.html')">
@@ -174,16 +213,24 @@
     }
   </script>
 <script>
-  document.getElementById("botaoPulverizador").addEventListener("click", function () {
-    const pinCorreto = "4321"; // Você pode trocar por outro PIN
-    const tentativa = prompt("Digite o PIN para acessar o registro do pulverizador:");
+  const pinCorreto = "4321";
 
+  function mostrarPIN() {
+    document.getElementById("popupPIN").style.display = "block";
+  }
+
+  function fecharPIN() {
+    document.getElementById("popupPIN").style.display = "none";
+  }
+
+  function verificarPIN() {
+    const tentativa = document.getElementById("campoPIN").value;
     if (tentativa === pinCorreto) {
-      window.location.href = "registro-pulverizacao.html"; // Página que será aberta após o PIN correto
+      window.location.href = "registro-pulverizador.html";
     } else {
       alert("❌ PIN incorreto. Acesso negado.");
     }
-  });
+  }
 </script>
 
 </script>
