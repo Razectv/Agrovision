@@ -104,6 +104,10 @@
 </head>
 <body>
 
+<div id="registro" style="display:none;">
+  <!-- conteúdo do registro aqui -->
+</div>
+
 <body style="position: relative;">
 
   <!--🖊️ Menu suspenso com três pontinhos-->
@@ -129,9 +133,8 @@
       <div class="item-icon">🧪</div>
       <div class="item-label">Bico Calibrador</div>
     </div>
-    <div class="item" onclick="abrir('registro-pulverizacao.html')">
-  <div class="item-icon">🚜</div>
-  <div class="item-label">Pulverizador</div>
+    <div id="botaoPulverizador" style="cursor:pointer; background:#f1f8e9; color:#000; padding:10px; border-radius:5px; text-align:center; font-weight:bold;">
+  🔐 Acessar Registro do Pulverizador
 </div>
 
     <div class="item" onclick="abrir('erro.html')">
@@ -171,10 +174,18 @@
     }
   </script>
 <script>
-  function toggleMenu() {
-    const menu = document.getElementById("menu");
-    menu.style.display = menu.style.display === "none" ? "block" : "none";
-  }
+  document.getElementById("botaoPulverizador").addEventListener("click", function () {
+    const pinCorreto = "4321"; // Você pode trocar por outro PIN
+    const tentativa = prompt("Digite o PIN para acessar o registro do pulverizador:");
+
+    if (tentativa === pinCorreto) {
+      window.location.href = "registro-pulverizacao.html"; // Página que será aberta após o PIN correto
+    } else {
+      alert("❌ PIN incorreto. Acesso negado.");
+    }
+  });
+</script>
+
 </script>
 
 
