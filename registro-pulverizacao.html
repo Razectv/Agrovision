@@ -150,7 +150,7 @@
 
   <h2>📋 Registros Salvos</h2>
 <button onclick="exportarCSV()">📤 Exportar Registros</button>
-<button onclick="gerarPDF()">📄 Gerar PDF</button>
+<button onclick="exportarPDF()">📄 Exportar para PDF</button>
 
   <div id="listaRegistros">🔄 Carregando registros...</div>
 
@@ -231,9 +231,9 @@
           btn.title = "Apagar registro";
           btn.onclick = () => {
   const confirmar = confirm("🗑️ Tem certeza que deseja apagar este registro?");
-  if (confirmar) {
-    apagarRegistro(registroId);
-  }
+if (confirmar) {
+  apagarRegistro(registroId);
+}
 };
 
           item.appendChild(content);
