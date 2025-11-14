@@ -128,6 +128,8 @@
     <select id="tipo" required>
       <option value="">Selecione</option>
       <option value="Fungicida">Fungicida</option>
+<option value="Fungicida2">Fungicida2</option>
+<option value="Fungicida3">Fungicida3</option>
       <option value="Herbicida">Herbicida</option>
       <option value="Inseticida">Inseticida</option>
       <option value="Adubo Foliar">Adubo Foliar</option>
@@ -226,15 +228,14 @@
           `;
 
           const btn = document.createElement("button");
-btn.className = "apagar-btn";
-btn.innerHTML = "🗑️ Apagar registro";
-btn.title = "Apagar registro";
-
-btn.onclick = () => {
-  const confirmar = confirm("🗑️ Tem certeza que deseja apagar?");
-  if (confirmar) {
-    apagarRegistro(registroId);
-  }
+          btn.className = "btn-apagar";
+          btn.innerHTML = "🗑️";
+          btn.title = "Apagar registro";
+          btn.onclick = () => {
+  const confirmar = confirm("🗑️ Tem certeza que deseja apagar este registro?");
+if (confirmar) {
+  apagarRegistro(registroId);
+}
 };
 
           item.appendChild(content);
