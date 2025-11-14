@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Consulta de Códigos - AXIAL-230</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: black; /* Vermelho escuro estilo Case IH */
+      color: #fff;
+    }
+    h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 1px;
+    color: #CC1F20; /* Vermelho estilo Case IH */
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+    input[type="text"] {
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin: 0 auto 10px auto;
+    display: block;
+}
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #fff;
+      color: #8B0000;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #fff;
+      color: #000;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .not-found {
+      color: yellow;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('casefundo.jpg'); /* nome exato da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* visibilidade ajustável */
+    z-index: -1;
+  }
+</style>
+<body>
+<div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
+  <h1>Consulta de Códigos de Erro - AXIAL-230</h1>
+  <input type="text" id="codigoInput" placeholder="Digite o código (ex: E0001-03)" />
+  <button onclick="buscarCodigo()">Buscar</button>
+
+  <div id="resultado" class="resultado"></div>
+
+  <script>
+    const codigos = {
+      "E0001-03": {
+        descricao: "Sensor das tampas do tanque graneleiro – Em curto com a fonte de tensão alta",
+        causa: "Curto-circuito nos fios ou conector danificado. Verifique chicote e pontos de contato com estrutura."
+      },
+      "E0001-05": {
+        descricao: "Sensor das tampas do tanque graneleiro – Linha desconectada",
+        causa: "Cabo rompido ou conector solto. Inspecione continuidade e fixação."
+      },
+      "E0007-03": {
+        descricao: "Sensor do agitador de peneira – Em curto com a fonte de tensão alta",
+        causa: "Curto nos terminais ou sensor danificado. Verifique isolamento e integridade do sensor."
+      },
+      "E0007-04": {
+        descricao: "Sensor do agitador de peneira – Linha desconectada",
+        causa: "Conector fora do encaixe ou fio partido. Teste continuidade com multímetro."
+      },
+      "E0007-05": {
+        descricao: "Sensor do agitador de peneira – Linha desconectada",
+        causa: "Mesmo caso anterior. Verifique se há falha intermitente ou vibração excessiva."
+      },
+      "E0013-03": {
+        descricao: "Interruptor de orientação automática – Em curto com a fonte de tensão alta",
+        causa: "Curto interno ou entrada de água. Verifique vedação e limpeza do interruptor."
+      },
+      "E0013-05": {
+        descricao: "Interruptor de orientação automática – Linha desconectada",
+        causa: "Cabo solto ou rompido. Inspecione chicote e conectores."
+      },
+      "E0014-03": {
+        descricao: "Sensor de temperatura do reservatório hidráulico – Em curto com a fonte de tensão alta",
+        causa: "Sensor queimado ou curto nos fios. Teste o sensor e verifique alimentação."
+      },
+      "E0014-05": {
+        descricao: "Sensor de temperatura do reservatório hidráulico – Linha desconectada",
+        causa: "Conector mal encaixado ou fio rompido. Verifique continuidade."
+      },
+      "E0015": {
+        descricao: "Sensor de temperatura do reservatório hidráulico – Em curto com a fonte de baixa tensão",
+        causa: "Sensor com falha interna. Teste com multímetro e substitua se necessário."
+      },
+      "E0016": {
+        descricao: "Sensor de temperatura do reservatório hidráulico – Linha desconectada",
+        causa: "Verifique se o sensor está corretamente instalado e conectado."
+      },
+      "E0016-01": {
+        descricao: "Sensor de combustível (SCANIA-DC9)",
+        causa: "Verifique compatibilidade e funcionamento do sensor específico para SCANIA-DC9."
+      },
+      "E0016-03": {
+        descricao: "Sensor de combustível – Em curto com a fonte de tensão alta",
+        causa: "Curto nos terminais ou sensor danificado. Inspecione chicote e sensor."
+      },
+      "E0016-05": {
+        descricao: "Sensor de combustível – Linha desconectada",
+        causa: "Cabo rompido ou conector solto. Teste continuidade."
+      },
+      "E0017-03": {
+        descricao: "Interruptor de perigo – Em curto com a fonte de tensão alta",
+        causa: "Curto interno ou falha no botão. Verifique integridade e limpeza."
+      },
+      "E0017-05": {
+        descricao: "Interruptor de perigo – Linha desconectada",
+        causa: "Conector fora do encaixe ou fio partido. Inspecione chicote."
+      },
+      "E0018-03": {
+        descricao: "Giroscópio do interruptor do tanque graneleiro – Em curto com a fonte de tensão alta",
+        causa: "Curto no giroscópio ou falha de alimentação. Verifique sensor e fiação."
+      },
+      "E0018-05": {
+        descricao: "Giroscópio do interruptor do tanque graneleiro – Linha desconectada",
+        causa: "Sensor desconectado ou cabo rompido. Teste continuidade e fixação."
+      },
+      "E0021": {
+        descricao: "Pressão no corte de base",
+        causa: "Sensor de pressão fora da faixa ou entupido. Verifique pressão hidráulica e limpeza do sensor."
+      },
+      "E0021-03": {
+        descricao: "Sensor do elevador de grãos limpos – Em curto com a fonte de tensão alta",
+        causa: "Curto nos fios ou falha no sensor. Inspecione chicote e substitua se necessário."
+      },
+  "E0021-04": {
+    descricao: "Sensor de velocidade do elevador de grãos limpos – Em curto com a fonte de baixa tensão",
+    causa: "Sensor com falha interna ou fios em curto. Verifique chicote e alimentação."
+  },
+  "E0021-05": {
+    descricao: "Sensor de velocidade do elevador de grãos limpos – Linha desconectada",
+    causa: "Conector solto ou cabo rompido. Teste continuidade e fixação."
+  },
+  "E0022-03": {
+    descricao: "Sensor de posição do distribuidor – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Verifique chicote e pontos de contato."
+  },
+  "E0022-04": {
+    descricao: "Sensor de posição do distribuidor – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0022-05": {
+    descricao: "Sensor de posição do distribuidor – Linha desconectada",
+    causa: "Cabo rompido ou conector fora do encaixe. Inspecione chicote."
+  },
+  "E0024-03": {
+    descricao: "Interruptor da luz de trabalho dianteira – Em curto com a fonte de tensão alta",
+    causa: "Curto no botão ou fios expostos. Verifique integridade do interruptor."
+  },
+  "E0024-05": {
+    descricao: "Interruptor da luz de trabalho dianteira – Linha desconectada",
+    causa: "Conector mal encaixado ou fio partido. Teste continuidade."
+  },
+  "E0027-03": {
+    descricao: "Interruptor do giroscópio – Em curto com a fonte de tensão alta",
+    causa: "Curto interno ou entrada de água. Verifique vedação e limpeza."
+  },
+  "E0027-05": {
+    descricao: "Interruptor do giroscópio – Linha desconectada",
+    causa: "Cabo solto ou rompido. Inspecione chicote e conectores."
+  },
+  "E0028-03": {
+    descricao: "Interruptor do filtro de combustível – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no interruptor. Verifique chicote e sensor."
+  },
+  "E0028-05": {
+    descricao: "Interruptor do filtro de combustível – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0031-03": {
+    descricao: "Sensor de temperatura do motor hidrostático – Em curto com a fonte de tensão alta",
+    causa: "Sensor queimado ou curto nos fios. Teste o sensor e verifique alimentação."
+  },
+  "E0031-04": {
+    descricao: "Sensor de temperatura do motor hidrostático – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0031-05": {
+    descricao: "Sensor de temperatura do motor hidrostático – Linha desconectada",
+    causa: "Verifique se o sensor está corretamente instalado e conectado."
+  },
+  "E0032-03": {
+    descricao: "Sensor de posição do fechamento da descarga – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Inspecione chicote e estrutura."
+  },
+  "E0032-05": {
+    descricao: "Sensor de posição do fechamento da descarga – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Teste continuidade."
+  },
+  "E0033-03": {
+    descricao: "Interruptor de abertura do tubo de descarga – Em curto com a fonte de tensão alta",
+    causa: "Curto interno ou fios em contato com estrutura. Verifique chicote e interruptor."
+  },
+  "E0033-05": {
+    descricao: "Interruptor de abertura do tubo de descarga – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Inspecione chicote."
+  },
+  "E0034-03": {
+    descricao: "Interruptor de fechamento do tubo de descarga – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no botão. Verifique integridade e limpeza."
+  },
+  "E0034-04": {
+    descricao: "Interruptor de fechamento do tubo de descarga – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0034-05": {
+    descricao: "Interruptor de fechamento do tubo de descarga – Linha desconectada",
+    causa: "Cabo solto ou rompido. Inspecione chicote e conectores."
+  },
+  "E0035-03": {
+    descricao: "Interruptor do modo de estrada – Em curto com a fonte de tensão alta",
+    causa: "Curto interno ou falha no botão. Verifique integridade e limpeza."
+  },
+  "E0035-05": {
+    descricao: "Interruptor do modo de estrada – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Inspecione chicote."
+  },
+  "E0037-03": {
+    descricao: "Interruptor do sinal de conversão à esquerda – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no interruptor. Verifique chicote e botão."
+  },
+  "E0037-05": {
+    descricao: "Interruptor do sinal de conversão à esquerda – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Teste continuidade."
+  },
+  "E0038-03": {
+    descricao: "Interruptor do sinal de conversão à direita – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no interruptor. Verifique chicote e botão."
+  },
+  "E0038-05": {
+    descricao: "Interruptor do sinal de conversão à direita – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Teste continuidade."
+  },
+  "E0040-03": {
+    descricao: "Posição do distribuidor esquerdo – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Inspecione chicote e estrutura."
+  },
+  "E0040-04": {
+    descricao: "Posição do distribuidor esquerdo – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0040-05": {
+    descricao: "Posição do distribuidor esquerdo – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Teste continuidade."
+  },
+  "E0041-03": {
+    descricao: "Posição da boca de descarga – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura."
+  },
+  "E0041-04": {
+    descricao: "Posição da boca de descarga – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0041-05": {
+    descricao: "Posição da boca de descarga – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Inspecione chicote."
+  },
+  "E0042-03": {
+    descricao: "Sensor de pressão da lubrificação da TDF – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0042-04": {
+    descricao: "Sensor de pressão da lubrificação da TDF – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0042-05": {
+    descricao: "Sensor de pressão da lubrificação da TDF – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0043-03": {
+    descricao: "Posição de distribuição do distribuidor – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Verifique chicote e estrutura."
+  },
+  "E0043-04": {
+    descricao: "Posição de distribuição do distribuidor – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0043-05": {
+    descricao: "Posição de distribuição do distribuidor – Linha desconectada",
+    causa: "Cabo rompido ou conector fora do encaixe. Inspecione chicote."
+  },
+  "E0044-03": {
+    descricao: "Sensor de pressão da flexão da plataforma – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0044-04": {
+    descricao: "Sensor de pressão da flexão da plataforma – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0044-05": {
+    descricao: "Sensor de pressão da flexão da plataforma – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0045-03": {
+    descricao: "Posição horizontal do molinete – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura."
+  },
+  "E0045-05": {
+    descricao: "Posição horizontal do molinete – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0046-03": {
+    descricao: "Sensor de altura da plataforma RC – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0046-04": {
+    descricao: "Sensor de altura da plataforma RC – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0046-05": {
+    descricao: "Sensor de altura da plataforma RC – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0051-03": {
+    descricao: "Interruptor de restrição do filtro de óleo do reservatório – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no interruptor. Verifique chicote e sensor."
+  },
+  "E0051-05": {
+    descricao: "Interruptor de restrição do filtro de óleo do reservatório – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0052-03": {
+    descricao: "Sensor de nível do reservatório hidráulico – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0052-05": {
+    descricao: "Sensor de nível do reservatório hidráulico – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0055-03": {
+    descricao: "Interruptor de restrição do filtro da TDF – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no interruptor. Verifique chicote e sensor."
+  },
+  "E0055-05": {
+    descricao: "Interruptor de restrição do filtro da TDF – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0057-03": {
+    descricao: "Sensor de altura da plataforma L – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0057-04": {
+    descricao: "Sensor de altura da plataforma L – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0057-05": {
+    descricao: "Sensor de altura da plataforma L – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0058-03": {
+    descricao: "Sensor de altura da plataforma LC – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0058-04": {
+    descricao: "Sensor de altura da plataforma LC – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0058-05": {
+    descricao: "Sensor de altura da plataforma LC – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0059-03": {
+    descricao: "Sensor de tipo da plataforma – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0059-04": {
+    descricao: "Sensor de tipo da plataforma – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Teste continuidade e fixação."
+  },
+  "E0060-03": {
+    descricao: "Posição do distribuidor direito – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Verifique chicote e estrutura."
+  },
+  "E0060-04": {
+    descricao: "Posição do distribuidor direito – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0060-05": {
+    descricao: "Posição do distribuidor direito – Linha desconectada",
+    causa: "Cabo rompido ou conector fora do encaixe. Inspecione chicote."
+  },
+  "E0064-03": {
+    descricao: "Sensor alojado do tubo de descarga – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0064-04": {
+    descricao: "Sensor alojado do tubo de descarga – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0064-05": {
+    descricao: "Sensor alojado do tubo de descarga – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0065-00": {
+    descricao: "Sensor da escada traseira – Valor acima do normal",
+    causa: "Sensor fora de faixa ou com leitura incorreta. Verifique alimentação e sinal."
+  },
+  "E0065-03": {
+    descricao: "Sensor da escada traseira – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0065-04": {
+    descricao: "Sensor da escada traseira – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0065-05": {
+    descricao: "Sensor da escada traseira – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0071-00": {
+    descricao: "Sensor de altura da plataforma R – Valor acima do normal",
+    causa: "Leitura fora da faixa esperada. Verifique o sensor e a alimentação."
+  },
+  "E0071-03": {
+    descricao: "Sensor de altura da plataforma R – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0071-04": {
+    descricao: "Sensor de altura da plataforma R – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0071-05": {
+    descricao: "Sensor de altura da plataforma R – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0074-03": {
+    descricao: "Interruptor de abertura das tampas do tanque graneleiro – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no interruptor. Verifique chicote e conexões no sistema de abertura."
+  },
+  "E0075-03": {
+    descricao: "Interruptor de fechamento das tampas do tanque graneleiro – Em curto com a fonte de tensão alta",
+    causa: "Curto interno ou fios em contato com estrutura. Verifique chicote e interruptor."
+  },
+  "E0077-03": {
+    descricao: "Posição vertical do molinete – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura do molinete."
+  },
+  "E0083-03": {
+    descricao: "Sensor de ângulo da inclinação da plataforma – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0083-04": {
+    descricao: "Sensor de ângulo da inclinação da plataforma – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0083-05": {
+    descricao: "Sensor de ângulo da inclinação da plataforma – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0084-03": {
+    descricao: "Sensor de pressão de elevação da plataforma – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0084-04": {
+    descricao: "Sensor de pressão de elevação da plataforma – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0084-05": {
+    descricao: "Sensor de pressão de elevação da plataforma – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0086-03": {
+    descricao: "Sensor de posição do alimentador – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Verifique chicote e estrutura."
+  },
+  "E0086-04": {
+    descricao: "Sensor de posição do alimentador – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0086-05": {
+    descricao: "Sensor de posição do alimentador – Linha desconectada",
+    causa: "Cabo rompido ou conector fora do encaixe. Inspecione chicote."
+  },
+  "E0087-03": {
+    descricao: "Sensor de umidade + – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0087-04": {
+    descricao: "Sensor de umidade + – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0087-05": {
+    descricao: "Sensor de umidade + – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0088-03": {
+    descricao: "Sensor de umidade - – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0088-04": {
+    descricao: "Sensor de umidade - – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0088-05": {
+    descricao: "Sensor de umidade - – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0089-03": {
+    descricao: "Sensor de temperatura de umidade – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0089-04": {
+    descricao: "Sensor de temperatura de umidade – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0089-05": {
+    descricao: "Sensor de temperatura de umidade – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0091-03": {
+    descricao: "Sensor de velocidade do picador – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0091-04": {
+    descricao: "Sensor de velocidade do picador – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0091-05": {
+    descricao: "Sensor de velocidade do picador – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0094-03": {
+    descricao: "Sensor de velocidade do alimentador – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0094-04": {
+    descricao: "Sensor de velocidade do alimentador – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0094-05": {
+    descricao: "Sensor de velocidade do alimentador – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0098-03": {
+    descricao: "Sensor de velocidade do distribuidor – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0098-04": {
+    descricao: "Sensor de velocidade do distribuidor – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0098-05": {
+    descricao: "Sensor de velocidade do distribuidor – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0105-03": {
+    descricao: "Luzes de freio – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no circuito das luzes. Verifique chicote e conexões."
+  },
+  "E0105-04": {
+    descricao: "Luzes de freio – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0105-05": {
+    descricao: "Luzes de freio – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0105-06": {
+    descricao: "Luzes de freio – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis pontos de contato com estrutura."
+  },
+  "E0106-03": {
+    descricao: "Giroscópio – Em curto com a fonte de tensão alta",
+    causa: "Curto nos terminais ou falha no sensor. Verifique chicote e alimentação."
+  },
+  "E0106-04": {
+    descricao: "Giroscópio – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0106-05": {
+    descricao: "Giroscópio – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0106-06": {
+    descricao: "Giroscópio – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis pontos de contato com estrutura."
+  },
+  "E0111-03": {
+    descricao: "Sensor de posição do tubo de descarga – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura do tubo."
+  },
+  "E0111-04": {
+    descricao: "Sensor de posição do tubo de descarga – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0111-05": {
+    descricao: "Sensor de posição do tubo de descarga – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0112-03": {
+    descricao: "Sensor de posição da escada traseira – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura da escada."
+  },
+  "E0112-04": {
+    descricao: "Sensor de posição da escada traseira – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0112-05": {
+    descricao: "Sensor de posição da escada traseira – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0113-03": {
+    descricao: "Sensor de posição do molinete – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura do molinete."
+  },
+  "E0113-04": {
+    descricao: "Sensor de posição do molinete – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0113-05": {
+    descricao: "Sensor de posição do molinete – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0114-03": {
+    descricao: "Sensor de posição da plataforma – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura da plataforma."
+  },
+  "E0114-04": {
+    descricao: "Sensor de posição da plataforma – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0114-05": {
+    descricao: "Sensor de posição da plataforma – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0115-03": {
+    descricao: "Sensor de posição do elevador de grãos limpos – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura do elevador."
+  },
+  "E0115-04": {
+    descricao: "Sensor de posição do elevador de grãos limpos – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0115-05": {
+    descricao: "Sensor de posição do elevador de grãos limpos – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0116-03": {
+    descricao: "Sensor de posição do elevador de retrilha – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura do elevador."
+  },
+  "E0116-04": {
+    descricao: "Sensor de posição do elevador de retrilha – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0116-05": {
+    descricao: "Sensor de posição do elevador de retrilha – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0117-03": {
+    descricao: "Sensor de posição do elevador de grãos sujos – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura do elevador."
+  },
+  "E0117-04": {
+    descricao: "Sensor de posição do elevador de grãos sujos – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0117-05": {
+    descricao: "Sensor de posição do elevador de grãos sujos – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0118-03": {
+    descricao: "Sensor de posição do sem-fim do tanque graneleiro – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura do sem-fim."
+  },
+  "E0118-04": {
+    descricao: "Sensor de posição do sem-fim do tanque graneleiro – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0118-05": {
+    descricao: "Sensor de posição do sem-fim do tanque graneleiro – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0119-03": {
+    descricao: "Sensor de posição da válvula de controle do ventilador – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura da válvula."
+  },
+  "E0119-04": {
+    descricao: "Sensor de posição da válvula de controle do ventilador – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0119-05": {
+    descricao: "Sensor de posição da válvula de controle do ventilador – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0120-03": {
+    descricao: "Sensor de posição da válvula de controle da esteira – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura da válvula."
+  },
+  "E0120-04": {
+    descricao: "Sensor de posição da válvula de controle da esteira – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0120-05": {
+    descricao: "Sensor de posição da válvula de controle da esteira – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0121-03": {
+    descricao: "Sensor de posição da válvula de controle da retrilha – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura da válvula."
+  },
+  "E0121-04": {
+    descricao: "Sensor de posição da válvula de controle da retrilha – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0121-05": {
+    descricao: "Sensor de posição da válvula de controle da retrilha – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0122-03": {
+    descricao: "Sensor de posição da válvula de controle do picador – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no sensor. Verifique chicote e estrutura da válvula."
+  },
+  "E0122-04": {
+    descricao: "Sensor de posição da válvula de controle do picador – Em curto com a fonte de tensão baixa",
+    causa: "Sensor com resistência alterada. Teste com multímetro."
+  },
+  "E0122-05": {
+    descricao: "Sensor de posição da válvula de controle do picador – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0131-03": {
+    descricao: "Válvula de recuo do molinete – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na válvula. Verifique chicote e conexões hidráulicas."
+  },
+  "E0131-04": {
+    descricao: "Válvula de recuo do molinete – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0131-05": {
+    descricao: "Válvula de recuo do molinete – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0131-06": {
+    descricao: "Válvula de recuo do molinete – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0133-03": {
+    descricao: "Luz lateral/de conversão do lado esquerdo – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0133-04": {
+    descricao: "Luz lateral/de conversão do lado esquerdo – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0133-05": {
+    descricao: "Luz lateral/de conversão do lado esquerdo – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0133-06": {
+    descricao: "Luz lateral/de conversão do lado esquerdo – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0134-03": {
+    descricao: "Luz de advertência do lado esquerdo – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0134-04": {
+    descricao: "Luz de advertência do lado esquerdo – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0134-05": {
+    descricao: "Luz de advertência do lado esquerdo – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0134-06": {
+    descricao: "Luz de advertência do lado esquerdo – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0135-03": {
+    descricao: "Luz de advertência do lado direito – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0135-04": {
+    descricao: "Luz de advertência do lado direito – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0135-05": {
+    descricao: "Luz de advertência do lado direito – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0135-06": {
+    descricao: "Luz de advertência do lado direito – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0136-03": {
+    descricao: "Lâmpada do aquecedor da grade – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0136-04": {
+    descricao: "Lâmpada do aquecedor da grade – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0136-05": {
+    descricao: "Lâmpada do aquecedor da grade – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0136-06": {
+    descricao: "Lâmpada do aquecedor da grade – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0137-03": {
+    descricao: "Válvula de elevação do molinete – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na válvula. Verifique chicote e conexões hidráulicas."
+  },
+  "E0137-04": {
+    descricao: "Válvula de elevação do molinete – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0137-05": {
+    descricao: "Válvula de elevação do molinete – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0137-06": {
+    descricao: "Válvula de elevação do molinete – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0138-03": {
+    descricao: "Válvula do distribuidor de palha – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na válvula. Verifique chicote e conexões hidráulicas."
+  },
+  "E0138-04": {
+    descricao: "Válvula do distribuidor de palha – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0138-05": {
+    descricao: "Válvula do distribuidor de palha – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0138-06": {
+    descricao: "Válvula do distribuidor de palha – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0140-03": {
+    descricao: "Faca vertical direita – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no atuador. Verifique chicote e estrutura."
+  },
+  "E0140-04": {
+    descricao: "Faca vertical direita – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0140-05": {
+    descricao: "Faca vertical direita – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0140-06": {
+    descricao: "Faca vertical direita – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0141-03": {
+    descricao: "Válvula de abaixamento do molinete – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na válvula. Verifique chicote e conexões hidráulicas."
+  },
+  "E0141-04": {
+    descricao: "Válvula de abaixamento do molinete – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0141-05": {
+    descricao: "Válvula de abaixamento do molinete – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0141-06": {
+    descricao: "Válvula de abaixamento do molinete – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0142-03": {
+    descricao: "Válvula de acionamento do molinete – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na válvula. Verifique chicote e conexões hidráulicas."
+  },
+  "E0142-04": {
+    descricao: "Válvula de acionamento do molinete – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0142-05": {
+    descricao: "Válvula de acionamento do molinete – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0142-06": {
+    descricao: "Válvula de acionamento do molinete – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0144-03": {
+    descricao: "Luz lateral/de conversão do lado direito – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0144-04": {
+    descricao: "Luz lateral/de conversão do lado direito – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0144-05": {
+    descricao: "Luz lateral/de conversão do lado direito – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0144-06": {
+    descricao: "Luz lateral/de conversão do lado direito – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0145-03": {
+    descricao: "Luz de advertência do trailer/plataforma do lado direito – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0145-04": {
+    descricao: "Luz de advertência do trailer/plataforma do lado direito – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0145-05": {
+    descricao: "Luz de advertência do trailer/plataforma do lado direito – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0145-06": {
+    descricao: "Luz de advertência do trailer/plataforma do lado direito – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0147-03": {
+    descricao: "Luz de advertência do trailer/plataforma do lado esquerdo – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0147-04": {
+    descricao: "Luz de advertência do trailer/plataforma do lado esquerdo – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0147-05": {
+    descricao: "Luz de advertência do trailer/plataforma do lado esquerdo – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0147-06": {
+    descricao: "Luz de advertência do trailer/plataforma do lado esquerdo – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0148-03": {
+    descricao: "Relé da bomba de combustível – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no relé. Verifique chicote e conexões elétricas."
+  },
+  "E0148-04": {
+    descricao: "Relé da bomba de combustível – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0148-05": {
+    descricao: "Relé da bomba de combustível – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0148-06": {
+    descricao: "Relé da bomba de combustível – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0149-03": {
+    descricao: "Válvula de troca da plataforma 3 – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na válvula. Verifique chicote e conexões hidráulicas."
+  },
+  "E0149-04": {
+    descricao: "Válvula de troca da plataforma 3 – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0149-05": {
+    descricao: "Válvula de troca da plataforma 3 – Linha desconectada",
+    causa: "Cabo rompido ou conector solto. Inspecione chicote."
+  },
+  "E0149-06": {
+    descricao: "Válvula de troca da plataforma 3 – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0150-03": {
+    descricao: "Luz do tubo de descarga – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0150-04": {
+    descricao: "Luz do tubo de descarga – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0150-05": {
+    descricao: "Luz do tubo de descarga – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0150-06": {
+    descricao: "Luz do tubo de descarga – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0151-03": {
+    descricao: "Luzes de trabalho traseiras – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha na lâmpada. Verifique chicote e conectores."
+  },
+  "E0151-04": {
+    descricao: "Luzes de trabalho traseiras – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0151-05": {
+    descricao: "Luzes de trabalho traseiras – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0151-06": {
+    descricao: "Luzes de trabalho traseiras – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0152-03": {
+    descricao: "Relé de troca da plataforma nº 1 – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no relé. Verifique chicote e conexões elétricas."
+  },
+  "E0152-04": {
+    descricao: "Relé de troca da plataforma nº 1 – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0152-05": {
+    descricao: "Relé de troca da plataforma nº 1 – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0152-06": {
+    descricao: "Relé de troca da plataforma nº 1 – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0153-03": {
+    descricao: "Relé de seleção da tela/defletor – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no relé. Verifique chicote e conexões elétricas."
+  },
+  "E0153-04": {
+    descricao: "Relé de seleção da tela/defletor – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0153-05": {
+    descricao: "Relé de seleção da tela/defletor – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0153-06": {
+    descricao: "Relé de seleção da tela/defletor – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos no relé."
+  },
+  "E0154-03": {
+    descricao: "Relé de troca da plataforma nº 2 – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no relé. Verifique chicote e conexões elétricas."
+  },
+  "E0154-04": {
+    descricao: "Relé de troca da plataforma nº 2 – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0154-05": {
+    descricao: "Relé de troca da plataforma nº 2 – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0154-06": {
+    descricao: "Relé de troca da plataforma nº 2 – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  },
+  "E0155-03": {
+    descricao: "Relé de acionamento da válvula de altura da plataforma – Em curto com a fonte de tensão alta",
+    causa: "Curto nos fios ou falha no relé. Verifique chicote e conexões elétricas."
+  },
+  "E0155-04": {
+    descricao: "Relé de acionamento da válvula de altura da plataforma – Em curto com a fonte de tensão baixa",
+    causa: "Problema de alimentação ou resistência alterada. Teste com multímetro."
+  },
+  "E0155-05": {
+    descricao: "Relé de acionamento da válvula de altura da plataforma – Linha desconectada",
+    causa: "Conector fora do encaixe ou fio partido. Teste continuidade."
+  },
+  "E0155-06": {
+    descricao: "Relé de acionamento da válvula de altura da plataforma – Curto-circuito",
+    causa: "Curto direto entre os fios. Verifique isolamento e possíveis danos."
+  }
+};
+
+
+    function buscarCodigo() {
+      const codigo = document.getElementById("codigoInput").value.trim().toUpperCase();
+      const resultado = document.getElementById("resultado");
+
+      if (codigos[codigo]) {
+        resultado.innerHTML = `
+          <h2>Código: ${codigo}</h2>
+          <p><strong>Descrição:</strong> ${codigos[codigo].descricao}</p>
+          <p><strong>O que verificar:</strong> ${codigos[codigo].causa}</p>
+        `;
+      } else {
+        resultado.innerHTML = `<p class="not-found">Código não encontrado. Verifique se digitou corretamente.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
