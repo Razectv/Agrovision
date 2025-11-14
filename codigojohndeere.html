@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Códigos de Erro – John Deere</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #0b2e13; /* Verde escuro John Deere */
+      color: #fff;
+    }
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 26px;
+      text-align: center;
+      color: #ffcc00; /* Amarelo John Deere */
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      margin: 0 auto 20px auto;
+      display: block;
+      box-sizing: border-box;
+    }
+    #resultado {
+      background-color: #1a3d1a;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    h2 {
+      color: #ffcc00;
+    }
+  </style>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('johndeerefundo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* 30% visível */
+    z-index: -1;
+  }
+</style>
+<body>
+<div class="fundo"></div>
+  <!-- Conteúdo da página vem aqui -->
+  <h1>Códigos de Erro – John Deere</h1>
+  <input type="text" id="codigoInput" placeholder="Digite o código ex: SPN 110 FMI 04" />
+  <div id="resultado"></div>
+
+  <script>
+    const codigosJohnDeere = {
+      "SPN 110 FMI 04": {
+        descricao: "Temperatura do líquido de arrefecimento baixa",
+        causa: "Sensor com leitura abaixo do esperado ou falha no chicote.",
+        solucao: "Verifique o sensor de temperatura, conectores e continuidade do chicote."
+      },
+  "2372.05": {
+    descricao: "Falha do circuito das luzes de freio",
+    causa: "Circuito aberto, lâmpada queimada ou mau contato nos conectores.",
+    solucao: "Verifique a lâmpada de freio, fusíveis, conectores e chicote. Substitua componentes danificados."
+  },
+  "96.03": {
+    descricao: "Falha do circuito do sensor de nível de combustível",
+    causa: "Sensor com leitura fora da faixa ou circuito aberto.",
+    solucao: "Verifique o nível real do combustível, inspecione o chicote, conectores e substitua o sensor se necessário."
+  },
+  "524252.05": {
+    descricao: "Falha no circuito do solenoide da TDP traseira",
+    causa: "Circuito aberto, curto ou sobreaquecido enquanto a TDP está desativada.",
+    solucao: "Verifique chicote, conectores e solenoide. Meça a corrente e substitua componentes danificados."
+  },
+  "002602.01": {
+    descricao: "Nível do reservatório de óleo hidráulico limpo muito baixo",
+    causa: "Interruptor indica nível baixo com temperatura alta e motor em rotação.",
+    solucao: "Verifique o nível de óleo, possíveis vazamentos e funcionamento da bomba de carga."
+  },
+  "002602.02": {
+    descricao: "Falha no interruptor de nível do reservatório de óleo hidráulico limpo",
+    causa: "Defeito elétrico ou mecânico no interruptor de nível.",
+    solucao: "Inspecione o interruptor, chicote e conectores. Substitua se necessário."
+  },
+  "522260.02": {
+    descricao: "Incompatibilidade dos sensores de rotação da roda",
+    causa: "Sensores primário e secundário com leituras divergentes.",
+    solucao: "Verifique os sensores, alinhamento e integridade do chicote."
+  },
+  "523749.16": {
+    descricao: "Embreagem da TDP deslizando por muito tempo",
+    causa: "Acionamento repetido com carga pesada e rotação alta do motor.",
+    solucao: "Desligue a TDP, aguarde o resfriamento e evite sobrecarga contínua."
+  },
+  "524223.03": {
+    descricao: "Alta tensão no circuito do interruptor de bloqueio do diferencial",
+    causa: "Interruptor permaneceu fechado por mais de 15 segundos após acionamento.",
+    solucao: "Verifique se há obstrução física no pedal ou tapete. Inspecione o interruptor."
+  },
+  "524224.14": {
+    descricao: "TDP traseira desativada",
+    causa: "Conflito entre sinal do interruptor e mensagem da ACU.",
+    solucao: "Verifique os códigos da ACU relacionados antes de diagnosticar este código."
+  },
+  "524235.05": {
+    descricao: "Falha no circuito do solenoide da TDM",
+    causa: "Circuito aberto, curto ou sobreaquecido enquanto a TDM está desativada.",
+    solucao: "Inspecione chicote, conectores e solenoide. Substitua se necessário."
+  },
+  "002602.18": {
+    descricao: "Nível baixo de óleo hidráulico",
+    causa: "Interruptor indica nível baixo com motor em funcionamento. Pode haver vazamento ou falha na bomba.",
+    solucao: "Verifique vazamentos, funcionamento da bomba de carga e nível do reservatório."
+  },
+  "522384.14": {
+    descricao: "TDP em 4R/5R impedida",
+    causa: "Veículo em marcha alta com TDP traseira acionada.",
+    solucao: "Desative a TDP antes de engatar marchas altas. Verifique o modo automático do CommandCenter."
+  },
+  "523698.09": {
+    descricao: "Mensagem no mostrador AMS ausente",
+    causa: "A CCU não recebe mensagens do GreenStar™.",
+    solucao: "Verifique conexões CAN, integridade do mostrador e comunicação entre módulos."
+  },
+  "524016.04": {
+    descricao: "Baixa tensão variável de alimentação da CCU",
+    causa: "Tensão da bateria abaixo de 12.5 V ou falha na alimentação do CLC.",
+    solucao: "Verifique bateria, alternador e conexões elétricas do sistema de carga."
+  },
+  "524224.02": {
+    descricao: "Incompatibilidade da tensão do interruptor da TDP",
+    causa: "Sinal do interruptor difere da mensagem CAN da ACU.",
+    solucao: "Diagnostique os códigos da ACU antes de prosseguir com este código."
+  },
+  "524251.31": {
+    descricao: "Operador ausente com a TDP traseira ligada",
+    causa: "Sensor do assento não detecta presença enquanto a TDP está engatada.",
+    solucao: "Verifique o sensor de presença do assento e o sistema de segurança da TDP."
+  },
+  "000096.04": {
+    descricao: "Baixa tensão no circuito do sensor do nível de combustível",
+    causa: "Tensão abaixo de 0,2 V no circuito do sensor.",
+    solucao: "Verifique chicote, conectores e substitua o sensor se necessário."
+  },
+  "000096.17": {
+    descricao: "Nível de combustível baixo",
+    causa: "Sensor indica menos de 3% de combustível.",
+    solucao: "Reabasteça o tanque e verifique se o sensor está funcionando corretamente."
+  },
+  "000567.05": {
+    descricao: "Falha do circuito do solenóide do bloqueio do diferencial dianteiro",
+    causa: "Circuito aberto, curto ou sobreaquecido no solenóide.",
+    solucao: "Inspecione chicote, conectores e funcionamento do solenóide."
+  },
+  "000569.05": {
+    descricao: "Falha do circuito do solenóide do bloqueio do diferencial traseiro",
+    causa: "Circuito aberto, curto ou sobreaquecido no solenóide.",
+    solucao: "Verifique chicote, conectores e substitua o solenóide se necessário."
+  },
+  "001079.03": {
+    descricao: "Alta tensão de alimentação do sensor da CCU",
+    causa: "Tensão acima de 5,2 V no circuito de alimentação do sensor.",
+    solucao: "Verifique a fonte de alimentação, chicote e conectores. Corrija sobrecarga ou substitua sensor."
+  },
+  "001079.04": {
+    descricao: "Baixa tensão de alimentação do sensor da CCU",
+    causa: "Tensão abaixo de 4,8 V no circuito de alimentação do sensor.",
+    solucao: "Verifique a fonte de alimentação, chicote e conectores. Corrija falha ou substitua sensor."
+  },
+  "001086.03": {
+    descricao: "Alta tensão no circuito do sensor de pressão do freio pneumático",
+    causa: "Tensão acima do normal ou curto com fonte alta.",
+    solucao: "Verifique chicote, sensor e conectores. Corrija curto ou substitua sensor."
+  },
+  "001086.04": {
+    descricao: "Baixa tensão no circuito do sensor de pressão do freio pneumático",
+    causa: "Tensão abaixo do normal ou curto com o terra.",
+    solucao: "Inspecione chicote, sensor e conectores. Corrija falha ou substitua sensor."
+  },
+  "001638.00": {
+    descricao: "Temperatura do óleo hidráulico muito alta",
+    causa: "Sensor indica temperatura excessiva do fluido hidráulico.",
+    solucao: "Pare o equipamento, verifique nível de óleo e sistema de resfriamento."
+  },
+  "001638.03": {
+    descricao: "Alta tensão no circuito do sensor de temperatura do óleo hidráulico",
+    causa: "Circuito aberto ou leitura fora da faixa.",
+    solucao: "Verifique chicote, sensor e conectores. Substitua se necessário."
+  },
+  "001638.04": {
+    descricao: "Baixa tensão no circuito do sensor de temperatura do óleo hidráulico",
+    causa: "Sensor em curto com o terra.",
+    solucao: "Inspecione chicote, conectores e substitua sensor se necessário."
+  },
+  "001638.16": {
+    descricao: "Temperatura do óleo hidráulico alta",
+    causa: "Sensor indica temperatura acima do normal durante operação.",
+    solucao: "Verifique nível de óleo, sistema de resfriamento e carga aplicada."
+  },
+  "001713.00": {
+    descricao: "Filtro do óleo hidráulico obstruído",
+    causa: "Sensor de restrição indica pressão alta por tempo prolongado.",
+    solucao: "Substitua o filtro e verifique se há contaminação no sistema."
+  },
+  "001883.00": {
+    descricao: "Excesso de velocidade da TDP traseira",
+    causa: "Sensor indica rotação acima do limite permitido.",
+    solucao: "Reduza carga, verifique calibração da TDP e funcionamento do sensor."
+  },
+  "001883.01": {
+    descricao: "Baixa velocidade da TDP traseira",
+    causa: "Sensor indica rotação abaixo do esperado. Pode ser calibração incorreta ou carga excessiva.",
+    solucao: "Verifique calibração da TDP, rotação do motor e peso do implemento."
+  },
+  "001883.13": {
+    descricao: "TDP traseira não calibrada",
+    causa: "Sistema indica ausência de calibração ou calibração inválida.",
+    solucao: "Realize o procedimento de calibração da TDP conforme manual técnico."
+  },
+  "523916.03": {
+    descricao: "Tensão alta no circuito do sensor de restrição do filtro de óleo hidráulico",
+    causa: "Voltagem acima do normal ou em curto com fonte alta.",
+    solucao: "Verifique chicote, sensor e substitua se necessário. Confirme se o filtro está obstruído."
+  },
+  "523916.04": {
+    descricao: "Voltagem baixa no circuito do sensor de restrição do filtro de óleo hidráulico",
+    causa: "Voltagem abaixo do normal ou em curto com o terra.",
+    solucao: "Inspecione chicote, sensor e conectores. Substitua se necessário."
+  },
+  "523916.15": {
+    descricao: "Filtro do óleo hidráulico obstruído",
+    causa: "Pressão acima de 3,5 bar detectada com motor acima de 800 rpm por mais de 15 segundos.",
+    solucao: "Substitua o filtro e verifique contaminação no sistema hidráulico."
+  },
+  "523916.16": {
+    descricao: "Sensor de restrição do filtro conectado antes de 1500 rpm",
+    causa: "Sensor detecta pressão alta com rotação acima de 1500 rpm por mais de 15 segundos.",
+    solucao: "Verifique condição do filtro e funcionamento do sensor. Resolva códigos 523916.03/04 antes."
+  },
+  "523851.02": {
+    descricao: "iTEC™ desativado devido a HCC/SCC/TEC",
+    causa: "Falta de resposta das unidades de controle do levante, válvula seletiva ou equipamento do trator.",
+    solucao: "Diagnostique e resolva os códigos individuais de HCC, SCC ou TEC antes de tratar este código."
+  },
+  "524017.31": {
+    descricao: "Tensão do interruptor de neutro ou da fenda de avanço fora da faixa",
+    causa: "Interruptor não indica posição clara (fechado ou aberto).",
+    solucao: "Verifique posição da alavanca, chicote e funcionamento do interruptor."
+  },
+  "524018.31": {
+    descricao: "Falha na transição de estacionamento/neutro do reversor direito",
+    causa: "Transição da alavanca demorando mais de 5 segundos.",
+    solucao: "Inspecione o mecanismo do reversor e ajuste conforme especificações."
+  },
+  "524019.31": {
+    descricao: "Falha na transição de neutro/não-neutro do reversor direito",
+    causa: "Transição da alavanca excedendo tempo permitido.",
+    solucao: "Verifique desgaste mecânico, sensores e tempo de resposta do sistema."
+  },
+  "524020.31": {
+    descricao: "Transmissão engatada na partida",
+    causa: "Reversor direito não está em estacionamento no momento da partida.",
+    solucao: "Coloque o reversor em posição de estacionamento antes de ligar o veículo."
+  },
+  "524021.31": {
+    descricao: "Conflito de múltiplos interruptores do reversor",
+    causa: "Um ou mais interruptores da alavanca de reversão podem estar com falha.",
+    solucao: "Verifique os interruptores da alavanca de reversão e substitua os defeituosos."
+  },
+  "524101.02": {
+    descricao: "Conflito do circuito do sensor/interruptor da alavanca de controle do levante dianteiro",
+    causa: "Interruptor em conflito com a tensão do sensor.",
+    solucao: "Verifique chicote, sensor e interruptor da alavanca de controle do levante dianteiro."
+  },
+  "524101.03": {
+    descricao: "Alta tensão no circuito do sensor da alavanca de controle do levante dianteiro",
+    causa: "Tensão acima do normal no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "524101.04": {
+    descricao: "Baixa tensão no circuito do sensor da alavanca de controle do levante dianteiro",
+    causa: "Tensão abaixo do normal no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "524102.02": {
+    descricao: "Conflito no circuito do interruptor/sensor da alavanca de controle da VCR V",
+    causa: "Interruptor em conflito com a tensão do sensor.",
+    solucao: "Verifique chicote, sensor e interruptor da alavanca de controle da VCR V."
+  },
+  "524102.03": {
+    descricao: "Alta tensão no circuito do sensor da alavanca de controle da VCR V",
+    causa: "Tensão acima do normal no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "524102.04": {
+    descricao: "Baixa tensão no circuito do sensor da alavanca de controle da VCR V",
+    causa: "Tensão abaixo do normal no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "524103.02": {
+    descricao: "Conflito no circuito do interruptor/sensor da alavanca de controle da VCR IV",
+    causa: "Interruptor em conflito com a tensão do sensor.",
+    solucao: "Verifique chicote, sensor e interruptor da alavanca de controle da VCR IV."
+  },
+  "000974.04": {
+    descricao: "Tensão baixa no circuito do sensor do acelerador manual",
+    causa: "Tensão abaixo do normal no circuito do acelerador.",
+    solucao: "Verifique chicote, alimentação e substitua o sensor se necessário."
+  },
+  "001080.03": {
+    descricao: "Alta tensão da alimentação 2 do sensor da ACU",
+    causa: "Tensão acima do normal no circuito de alimentação secundária do sensor.",
+    solucao: "Verifique fonte de alimentação, chicote e substitua o sensor se necessário."
+  },
+  "001080.04": {
+    descricao: "Baixa tensão da alimentação 2 do sensor da ACU",
+    causa: "Tensão abaixo do normal no circuito de alimentação secundária do sensor.",
+    solucao: "Verifique fonte de alimentação, chicote e substitua o sensor se necessário."
+  },
+  "002000.09": {
+    descricao: "Sem mensagem da ECU",
+    causa: "A unidade de controle do apoio de braço não está recebendo mensagens da ECU.",
+    solucao: "Verifique comunicação CAN, conectores e funcionamento da ECU."
+  },
+  "002003.09": {
+    descricao: "Mensagem da PTI ou PTP ausente",
+    causa: "A unidade de controle do apoio de braço não recebe mensagens da PTI ou PTP.",
+    solucao: "Verifique módulos PTI/PTP, comunicação CAN e conectores."
+  },
+  "002020.09": {
+    descricao: "Mensagem do SFA ausente",
+    causa: "A unidade de controle do apoio de braço não recebe mensagens do SFA.",
+    solucao: "Verifique módulo SFA, chicote e comunicação CAN."
+  },
+  "002049.09": {
+    descricao: "Mensagem CAB ausente",
+    causa: "A unidade de controle do braço do assento não recebe mensagens da CAB.",
+    solucao: "Verifique módulo CAB, chicote e comunicação CAN."
+  },
+  "523664.02": {
+    descricao: "Conflito entre interruptores 1 e 2 de faixa de velocidade",
+    causa: "Interruptores da faixa de velocidade 1 e 2 estão selecionados ao mesmo tempo.",
+    solucao: "Verifique interruptores, chicote e lógica de controle da transmissão."
+  },
+  "523923.02": {
+    descricao: "Conflito do sensor/interruptor da alavanca de controle da VCR I",
+    causa: "Tensão do sensor e do interruptor estão em conflito.",
+    solucao: "Verifique chicote, sensor e interruptor da VCR I."
+  },
+  "523923.03": {
+    descricao: "Alta tensão no circuito do sensor da alavanca de controle da VCR I",
+    causa: "Tensão acima do normal no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "523923.04": {
+    descricao: "Baixa tensão no circuito do sensor da alavanca de controle da VCR I",
+    causa: "Tensão abaixo de 0,2 V no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "523953.02": {
+    descricao: "Conflito no circuito do sensor da alavanca de controle de velocidade do AutoPowr/IVT",
+    causa: "Conflito entre as voltagens 1 e 2 dos sensores da alavanca.",
+    solucao: "Verifique os sensores da alavanca, chicote e calibração do sistema AutoPowr/IVT."
+  },
+  "523953.03": {
+    descricao: "Tensão alta no sensor da alavanca de controle de velocidade do AutoPowr/IVT",
+    causa: "Voltagem acima do normal no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "523953.04": {
+    descricao: "Tensão baixa no sensor da alavanca de controle de velocidade do AutoPowr/IVT",
+    causa: "Voltagem abaixo do normal no sensor.",
+    solucao: "Verifique alimentação, chicote e substitua o sensor se necessário."
+  },
+  "523954.07": {
+    descricao: "Falha de ajuste da faixa de velocidade 1",
+    causa: "Calibração inválida para a faixa de velocidade 1.",
+    solucao: "Refaça a calibração da faixa de velocidade conforme o manual técnico."
+  },
+  "523954.11": {
+    descricao: "Conflito no ajustador de velocidade definida",
+    causa: "Conflito na tensão do circuito do regulador de velocidade.",
+    solucao: "Verifique o sensor de velocidade definida e o circuito de controle."
+  },
+  "523955.31": {
+    descricao: "Sobrecarga do motor no modo manual",
+    causa: "Carga do motor muito alta durante operação manual.",
+    solucao: "Reduza a carga ou mude para modo automático. Verifique o implemento acoplado."
+  },
+  "523960.17": {
+    descricao: "Operador ausente em baixas velocidades",
+    causa: "Sensor de presença do assento não detecta operador em baixa velocidade.",
+    solucao: "Verifique o sensor do assento e o sistema de segurança do operador."
+  },
+  "523960.31": {
+    descricao: "Operador fora do assento durante o comando do reversor",
+    causa: "Comando de direção ativado sem presença do operador.",
+    solucao: "Verifique o sensor de presença e evite operar o reversor sem estar no assento."
+  },
+  "523961.02": {
+    descricao: "Estacionamento acionado com marcha engatada",
+    causa: "Freio de estacionamento ativado enquanto o veículo está engrenado.",
+    solucao: "Desengrene a marcha antes de acionar o freio de estacionamento."
+  },
+  "523961.07": {
+    descricao: "Falha no acionamento da trava de estacionamento",
+    causa: "Estado real da trava não corresponde ao comando.",
+    solucao: "Verifique o atuador da trava, sensores de posição e chicote."
+  },
+
+    };
+
+    function buscarCodigo() {
+      const codigo = document.getElementById("codigoInput").value.trim().toUpperCase();
+      const resultado = codigosJohnDeere[codigo];
+      const divResultado = document.getElementById("resultado");
+
+      if (resultado) {
+        divResultado.innerHTML = `
+          <h2>${codigo}</h2>
+          <p><strong>Descrição:</strong> ${resultado.descricao}</p>
+          <p><strong>Causa:</strong> ${resultado.causa}</p>
+          <p><strong>Solução:</strong> ${resultado.solucao}</p>
+        `;
+      } else {
+        divResultado.innerHTML = `<p>Código não encontrado.</p>`;
+      }
+    }
+
+    document.getElementById("codigoInput").addEventListener("input", buscarCodigo);
+  </script>
+</body>
+</html>
