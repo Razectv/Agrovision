@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agro Vision • Mapa de Buracos</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0fff0;
+    }
+    header {
+      padding: 12px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      color: #228b22;
+    }
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+    }
+    button {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #228b22;
+      color: #fff;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: #fff;
+      color: #222;
+    }
+    #map {
+      height: 50vh;
+      margin: 0 10px 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .panel {
+      background: #fff;
+      margin: 0 10px 16px;
+      padding: 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .field {
+      margin: 8px 0;
+    }
+    .field label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+    .list {
+      max-height: 20vh;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .item {
+      padding: 8px;
+      border-bottom: 1px dashed #eee;
+    }
+    .item:last-child { border-bottom: none; }
+    .status {
+      padding: 8px;
+      font-size: 14px;
+      background: #fffbe6;
+      border: 1px solid #ffe58f;
+      color: #8b6d00;
+      border-radius: 8px;
+      margin: 0 10px 16px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📍 Agro Vision — Mapa de Buracos</h1>
+  </header>
+
+  <div class="toolbar">
+    <button id="btnLocalizar">🎯 Usar minha localização</button>
+    <button class="secondary" id="btnMarcar">📝 Marcar buraco</button>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="panel">
+    <div class="field">
+      <label for="talhao">Talhão</label>
+      <input id="talhao" placeholder="Ex.: T15" />
+    </div>
+    <div class="field">
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" rows="2" placeholder="Ex.: Buraco fundo"></textarea>
+    </div>
+    <button id="btnSalvar">💾 Salvar ponto</button>
+  </div>
+
+  <div class="panel">
+    <label>Pontos marcados</label>
+    <div class="list" id="lista"></div>
+    <button class="secondary" id="btnLimpar">🗑️ Limpar todos</button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    let map, currentLatLng = null, markers = [];
+    const STORAGE_KEY = "buracos_agrovision";
+
+    function initMap() {
+      const defaultCenter = [-2.944, -48.953]; // Tailândia-PA
+      map = L.map("map").setView(defaultCenter, 14);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap"
+      }).addTo(map);
+
+      map.on("click", (e) => {
+        currentLatLng = e.latlng;
+        showStatus(`Posição definida: ${currentLatLng.lat.toFixed(6)}, ${currentLatLng.lng.toFixed(6)}`);
+        highlightTempMarker();
+      });
+
+      loadPoints().forEach(addPointToMap);
+      renderList();
+    }
+
+    function useMyLocation() {
+      if (!navigator.geolocation) {
+        showStatus("GPS não disponível.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          currentLatLng = L.latLng(latitude, longitude);
+          // Sem zoom automático
+          map.setView(currentLatLng, map.getZoom());
+          showStatus(`Localização: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+          highlightTempMarker();
+        },
+        () => showStatus("Não foi possível obter a localização. Verifique permissões de GPS."),
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    let tempMarker = null;
+    function highlightTempMarker() {
+      if (!currentLatLng) return;
+      if (tempMarker) map.removeLayer(tempMarker);
+      tempMarker = L.circleMarker(currentLatLng, {
+        radius: 8, color: "#228b22", fillColor: "#4caf50", fillOpacity: 0.6
+      }).addTo(map).bindPopup("Posição atual");
+    }
+
+    function savePoint() {
+      if (!currentLatLng) {
+        showStatus("Defina a posição primeiro.");
+        return;
+      }
+      const talhao = document.getElementById("talhao").value.trim();
+      const descricao = document.getElementById("descricao").value.trim();
+      const ponto = {
+        id: Date.now(),
+        lat: currentLatLng.lat,
+        lng: currentLatLng.lng,
+        talhao: talhao || "(Sem talhão)",
+        descricao: descricao || "(Sem descrição)"
+      };
+      const list = loadPoints();
+      list.push(ponto);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      addPointToMap(ponto);
+      renderList();
+      showStatus("Ponto salvo.");
+    }
+
+    function loadPoints() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+      catch { return []; }
+    }
+
+    function addPointToMap(ponto) {
+      const marker = L.marker([ponto.lat, ponto.lng]).addTo(map);
+      marker.bindPopup(`<b>${ponto.talhao}</b><br>${ponto.descricao}`);
+      marker._id = ponto.id;
+      markers.push(marker);
+    }
+
+    function renderList() {
+      const listEl = document.getElementById("lista");
+      const list = loadPoints();
+      if (list.length === 0) {
+        listEl.innerHTML = "<em>Nenhum ponto marcado.</em>";
+        return;
+      }
+      listEl.innerHTML = "";
+      list.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `<b>${p.talhao}</b> — ${p.descricao}
+          <br><small>Lat: ${p.lat.toFixed(6)}, Lng: ${p.lng.toFixed(6)}</small>`;
+        listEl.appendChild(div);
+      });
+    }
+
+    function clearAll() {
+      localStorage.removeItem(STORAGE_KEY);
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+      renderList();
+      showStatus("Todos os pontos removidos.");
+    }
+
+    function showStatus(msg) {
+      const el = document.getElementById("status");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(() => el.style.display = "none", 4000);
+    }
+
+    document.getElementById("btnLocalizar").addEventListener("click", useMyLocation);
+    document.getElementById("
