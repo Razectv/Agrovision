@@ -135,6 +135,16 @@
     z-index: -1;
   }
 </style>
+<script>
+  // Força todos os inputs a usarem teclado numérico
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("input").forEach(input => {
+      input.setAttribute("inputmode", "numeric");
+      input.setAttribute("pattern", "[0-9]*");
+    });
+  });
+</script>
+
 <body>
 <div class="fundo"></div>
   <!-- Conteúdo da página vem aqui -->
@@ -178,6 +188,87 @@
   </div>
 
   <div class="result" id="resultado"></div>
+<div style="background:rgba(0,0,0,0.4); padding:16px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); margin-top:20px;">
+  <h3 style="color:#2e7d32;">🧪 Cálculo de Vazão por Tempo Coletado</h3>
+  <label>⏱️ Tempo de coleta (segundos):</label><br>
+  <input type="number" id="tempo" placeholder="Ex: 30" style="width:100%; padding:8px; margin-bottom:10px;" /><br>
+
+  <label>💧 Volume coletado (mL):</label><br>
+  <input type="number" id="volume" placeholder="Ex: 550" style="width:100%; padding:8px; margin-bottom:10px;" /><br>
+
+  <button onclick="calcularVazao()" style="padding:10px 20px; background:#4caf50; color:#fff; border:none; border-radius:8px; cursor:pointer;">
+    🔄 Calcular vazão por minuto
+  </button>
+
+  <div id="resultado" style="margin-top:15px; font-size:16px;"></div>
+</div>
+
+<script>
+  function calcularVazao() {
+    const tempo = parseFloat(document.getElementById("tempo").value);
+    const volume = parseFloat(document.getElementById("volume").value);
+
+    if (isNaN(tempo) || isNaN(volume) || tempo <= 0) {
+      document.getElementById("resultado").innerHTML = "⚠️ Preencha os campos corretamente.";
+      return;
+    }
+
+    const vazaoPorMinuto = (volume / tempo) * 60;
+    const litros = (vazaoPorMinuto / 1000).toFixed(2);
+
+    document.getElementById("resultado").innerHTML = `
+      💡 Vazão estimada: <strong>${litros} L/min</strong><br>
+      (Baseado em ${volume} mL coletados em ${tempo} segundos)
+    `;
+  }
+</script>
+<div style="background: rgba(0,0,0,0.4); padding:16px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); margin-top:20px; color:#fff;">
+  <h3 style="color:#fff;">🧮 Vazão por bico (L/min) a partir de L/ha, km/h e cm</h3>
+
+  <label>💧 Taxa de aplicação (L/ha):</label><br>
+  <input type="number" id="taxaHa" placeholder="Ex: 120" step="0.1" inputmode="numeric" style="width:100%; padding:8px; margin-bottom:10px;" /><br>
+
+  <label>🚜 Velocidade média (km/h):</label><br>
+  <input type="number" id="velKmH" placeholder="Ex: 18" step="0.1" inputmode="numeric" style="width:100%; padding:8px; margin-bottom:10px;" /><br>
+
+  <label>↔️ Espaçamento entre bicos (cm):</label><br>
+  <input type="number" id="espacCm" placeholder="Ex: 50" step="1" inputmode="numeric" style="width:100%; padding:8px; margin-bottom:10px;" /><br>
+
+  <button onclick="calcularLmin()" style="padding:10px 20px; background:#4caf50; color:#fff; border:none; border-radius:8px; cursor:pointer;">
+    🔄 Calcular L/min
+  </button>
+
+  <div id="resultadoLmin" style="margin-top:15px; font-size:16px;"></div>
+</div>
+
+<script>
+  function calcularLmin() {
+    const taxaHa = parseFloat(document.getElementById("taxaHa").value);
+    const velKmH = parseFloat(document.getElementById("velKmH").value);
+    const espacCm = parseFloat(document.getElementById("espacCm").value);
+
+    if (isNaN(taxaHa) || isNaN(velKmH) || isNaN(espacCm) || taxaHa <= 0 || velKmH <= 0 || espacCm <= 0) {
+      document.getElementById("resultadoLmin").innerHTML = "⚠️ Preencha todos os campos corretamente.";
+      return;
+    }
+
+    // Fórmula: L/min = (L/ha × km/h × cm) / 60.000
+    const lmin = (taxaHa * velKmH * espacCm) / 60000;
+
+    document.getElementById("resultadoLmin").innerHTML = `
+      ✅ Vazão por bico: <strong>${lmin.toFixed(2)} L/min</strong><br>
+      (Baseado em ${taxaHa} L/ha, ${velKmH} km/h, ${espacCm} cm)
+    `;
+  }
+
+  // Aplicar teclado numérico globalmente a todos inputs
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("input").forEach(input => {
+      input.setAttribute("inputmode", "numeric");
+    });
+  });
+</script>
+
 
   <script>
     function calcular() {
