@@ -15,7 +15,26 @@
       text-align: center;
       color: #2e7d32;
       font-size: 22px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+    }
+    .atualizar {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .atualizar button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #4caf50;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .atualizar span {
+      display: block;
+      margin-top: 6px;
+      font-size: 14px;
+      color: #555;
     }
     .fazenda {
       background: #00667;
@@ -85,6 +104,11 @@
   <!-- Conteúdo da página vem aqui -->
   <h1>🌦️ Previsão do Tempo — Agro Vision</h1>
 
+  <div class="atualizar">
+    <button onclick="atualizarTudo()">🔄 Atualizar previsão</button>
+    <span id="atualizado">🕒 Última atualização: --</span>
+  </div>
+
   <div id="karoline" class="fazenda">
     <h2>🌾 Fazenda Karoline</h2>
     <div class="previsao" id="karoline-previsao">Carregando...</div>
@@ -133,9 +157,17 @@
         });
     }
 
-    carregarPrevisao("karoline", fazendas.karoline);
-    carregarPrevisao("talisma", fazendas.talisma);
-    carregarPrevisao("karoline2", fazendas.karoline2);
+    function atualizarTudo() {
+      carregarPrevisao("karoline", fazendas.karoline);
+      carregarPrevisao("talisma", fazendas.talisma);
+      carregarPrevisao("karoline2", fazendas.karoline2);
+      const agora = new Date();
+      const hora = agora.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
+      const data = agora.toLocaleDateString("pt-BR");
+      document.getElementById("atualizado").innerText = `🕒 Última atualização: ${data} às ${hora}`;
+    }
+
+    atualizarTudo(); // carrega ao abrir
   </script>
 </body>
 </html>
