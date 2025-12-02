@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Calculadora de Receita Agrícola</title>
 <style>
   :root{--bg:#0f1115;--card:#fff;--text:#111;--accent:#0ea5e9;--muted:#667085}
@@ -87,6 +87,7 @@ Brandt Trietek 400 ml
 
     <div class="actions">
       <button onclick="calcular()">Calcular</button>
+      <button class="secondary" onclick="limparReceita()">Limpar receita</button>
       <button class="secondary" onclick="copiarResumo()">Copiar resumo</button>
       <!-- Adicione este botão onde estão os botões de ação -->
 <button onclick="compartilharImagemWhatsApp()">Compartilhar imagem WhatsApp</button>
@@ -130,6 +131,12 @@ function parseMeta(text){
   const talhoesMatch = text.match(/talh(ões|oes|ao)\s*([^\n]+)/i);
   const talhoes = talhoesMatch ? talhoesMatch[2].replace(/`\(.*?\)`/g,'').trim() : null;
   return { fazenda: oneLine(fazenda), operacao: oneLine(operacao), talhoes: oneLine(talhoes) };
+}
+function limparReceita(){
+  document.getElementById('entrada').value = "";
+  document.getElementById('areaInput').value = "";
+  document.getElementById('tituloInput').value = "";
+  document.getElementById('resumo').innerHTML = "";
 }
 
 /* Parser robusto de produtos: pega 'Nome 50 ml' em linhas ou trechos */
