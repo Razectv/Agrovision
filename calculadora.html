@@ -1,88 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Agrotech Cálculo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: black;
-    }
-
-    h1 {
-      color: #2e7d32;
-      font-size: 1.5em;
-      text-align: center;
-    }
-
-    select, input[type="number"], button {
-      margin: 5px 0;
-      width: 100%;
-      font-size: 1em;
-      box-sizing: border-box;
-    }
-
-    .talhoes, .produtos, .resultado {
-      margin-top: 20px;
-    }
-
-    .botao-talhao {
-      display: block;
-      margin: 5px 0;
-      padding: 10px;
-      background: #e0f2f1;
-      border: 1px solid #009688;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .botao-talhao.selecionado {
-      background: #80cbc4;
-    }
-
-    .hectare-info {
-      font-size: 12px;
-      color: #555;
-    }
-
-    .produto-item {
-      margin: 5px 0;
-      padding: 5px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .produto-item button {
-      float: right;
-      background: #f44336;
-      color: white;
-      border: none;
-      padding: 5px;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
-    @media (min-width: 600px) {
-      .botao-talhao {
-        display: inline-block;
-        width: auto;
-      }
-    }
-  </style>
-</head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculadora de Receita Agrícola</title>
 <style>
-  #resultado {
-    color: white;
-  }
-
-  #resultado h2,
-  #resultado p,
-  #resultado strong {
-    color: white;
-  }
+  :root{--bg:#0f1115;--card:#fff;--text:#111;--accent:#0ea5e9;--muted:#667085}
+  body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+  header{background:blue(--accent);color:#fff;padding:16px}
+  h1{margin:0;font-size:18px}
+  .wrap{max-width:900px;margin:18px auto;padding:0 16px}
+  .card{background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:16px}
+  textarea,input{width:100%;box-sizing:border-box;border:1px solid #e4e7ec;border-radius:10px;padding:12px;font-size:15px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  button{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+  button.secondary{background:#eef2f6;color:#0f172a}
+  .result{margin-top:16px}
+  .meta{color:var(--muted);font-size:14px;margin-bottom:8px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #eef2f6;border-radius:10px;overflow:hidden}
+  th,td{padding:10px;border-bottom:1px solid #f2f4f7;text-align:left;font-size:14px}
+  th{background:#f8fafc;font-weight:700}
+  .summaryTitle{font-weight:800;margin:6px 0 12px 0}
+  .badge{display:inline-block;background:#f1f5f9;color:#0f172a;border:1px solid #e2e8f0;border-radius:999px;padding:4px 10px;font-size:12px;margin-right:6px}
+  footer{color:#cbd5e1;text-align:center;padding:20px;font-size:12px}
 </style>
 <style>
   body {
@@ -106,227 +47,225 @@
     z-index: -1;
   }
 </style>
+</head>
+<!-- Adicione isso no <head> do seu HTML -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <body>
 <div class="fundo"></div>
   <!-- Conteúdo da página vem aqui -->
-<div style="text-align: center; margin-top: 30px;">
-  <a href="index.html" style="
-    display: inline-block;
-    background-color: white;
-    color: black;
-    padding: 12px 24px;
-    text-decoration: none;
-    border-radius: 8px;
-    font-size: 1em;
-  ">🔙 Voltar para o Portal</a>
-</div>
-  <h1>🌿 Agrotech Cálculo de Aplicação</h1>
+<header><h1>Calculadora de Receita Agrícola</h1></header>
 
-  <label for="fazenda">Selecione a fazenda:</label>
-  <select id="fazenda" onchange="mostrarTalhoes()">
-    <option value="">-- Escolha --</option>
-    <option value="karoline">Fazenda Karoline</option>
-    <option value="talisma">Fazenda Talismã</option>
-  </select>
+<div class="wrap">
+  <div class="card">
+    <div class="meta">Cole a receita (texto livre). Exemplo:</div>
+    <pre style="white-space:pre-wrap;border:1px solid #eee;padding:8px;border-radius:8px;background:#fafafa">
+Fazenda Talismã
+Dessecação Pré Plantio
+Talhões 4,5,6,7,8,9 (gradeados)
 
-  <div class="talhoes" id="talhoes"></div>
+Brandt Becatron 50 ml
+Speak Max 600 gr
+Metraro 1.2 lt
+Brandt Trietek 400 ml
 
-  <div class="produtos">
-    <h2>🧪 Produtos</h2>
-    <select id="produtoSelect">
-<option value="">-- Selecione o produto --</option>
-<option value="AFIADO">AFIADO</option>
-<option value="NITROFLIX">NITROFLIX</option>
-<option value="AGREGUS">AGREGUS</option>
-<option value="ACEMIP">ACEMIP</option>
-<option value="ADVER">ADVER</option>
-<option value="BOVERIL">BOVERIL</option>
-<option value="CARNADINE">CARNADINE</option>
-<option value="DIMILIN">DIMILIN</option>
-<option value="GALIL PR">GALIL PR</option>
-<option value="HERO BR">HERO BR</option>
-<option value="LUFENURON">LUFENURON</option>
-<option value="MACH EC">MACH EC</option>
-<option value="IMUNIT">IMUNIT</option>
-<option value="PIRIPROXIFEN">PIRIPROXIFEN</option>
-<option value="VERTIMEC">VERTIMEC</option>
-<option value="TERRA FORTE">TERRA FORTE</option>
-<option value="EXPEDITION">EXPEDITION</option>
-<option value="BAZUKA">BAZUKA</option>
-<option value="AGRIPON SOLUTION">AGRIPON SOLUTION</option>
-<option value="AMINOMAX">AMINOMAX</option>
-<option value="CENTRUM">CENTRUM</option>
-<option value="CROP BP">CROP BP</option>
-<option value="CROP SECK">CROP SECK</option>
-<option value="CROP SPIL">CROP SPIL</option>
-<option value="CROP OIL">CROP OIL</option>
-<option value="FERTILIZANTE PERFORMAPRO">FERTILIZANTE PERFORMAPRO</option>
-<option value="FERTILIZANTE MINERAL">FERTILIZANTE MINERAL</option>
-<option value="NUVITA MAGNESIO ULTRA">NUVITA MAGNESIO ULTRA</option>
-<option value="SHERIFE">SHERIFE</option>
-<option value="STARTER MANGANES">STARTER MANGANES</option>
-<option value="PLATINUN ROOTLAND">PLATINUN ROOTLAND</option>
-<option value="SOLUÇÃO NIITROGENADA">SOLUÇÃO NIITROGENADA</option>
-<option value="PORTERO HARVEST">PORTERO HARVEST</option>
-<option value="GUEPARDO">GUEPARDO</option>
-<option value="ASGARD">ASGARD</option>
-<option value="IMPACT HARVEST">IMPACT HARVEST</option>
-<option value="APEX STIMULLUM">APEX STIMULLUM</option>
-<option value="ADVANCED APROACH POWER">ADVANCED APROACH POWER</option>
-<option value="MIRAVIS PRO">MIRAVIS PRO</option>
-<option value="BRAVONIL">BRAVONIL</option>
-<option value="FUSÃO">FUSÃO</option>
-<option value="ACROSS">ACROSS</option>
-<option value="CERTEZA N">CERTEZA N</option>
-<option value="TRIDIUM">TRIDIUM</option>
-<option value="CYPRESS 20L">CYPRESS 20L</option>
-<option value="MITRION">MITRION</option>
-<option value="ATUMUS">ATUMUS</option>
-<option value="BRANDT MANI PLEX">BRANDT MANI PLEX</option>
-<option value="DROPON">DROPON</option>
-<option value="ELMO NITROFIX">ELMO NITROFIX</option>
-<option value="BRANDT TRITEK">BRANDT TRITEK</option>
-<option value="BIOKILLER">BIOKILLER</option>
-<option value="BRANDT ULTRANO 05 LT">BRANDT ULTRANO 05 LT</option>
-<option value="BASAGRAN 600">BASAGRAN 600</option>
-<option value="CLORIMORUM">CLORIMORUM</option>
-<option value="DUAL GOLD">DUAL GOLD</option>
-<option value="DK MAX">DK MAX</option>
-<option value="LUBAQUAT">LUBAQUAT</option>
-<option value="DESSICASH">DESSICASH</option>
-<option value="FINALE">FINALE</option>
-<option value="FRENO">FRENO</option>
-<option value="GLUFOSINATO DE AMONIA">GLUFOSINATO DE AMONIA</option>
-<option value="BRADDOCK">BRADDOCK</option>
-<option value="GLYPHOTAL WG">GLYPHOTAL WG</option>
-<option value="GRANT">GRANT</option>
-<option value="OSBAR">OSBAR</option>
-<option value="ZAP QI">ZAP QI</option>
-<option value="ZETHAMAX">ZETHAMAX</option>
-<option value="PACTO">PACTO</option>
-<option value="VERDICT MAX">VERDICT MAX</option>
-<option value="TRUNFO">TRUNFO</option>
-<option value="TOPINAM VPR PRO">TOPINAM VPR PRO</option>
-<option value="YAMATO">YAMATO</option>
-<option value="SONDA HT">SONDA HT</option>
-<option value="ARKEIRO">ARKEIRO</option>
-<option value="GRAP NOD">GRAP NOD</option>
-<option value="MASTERFIX SOJA">MASTERFIX SOJA</option>
-<option value="MASTERFIX AZOSPIRILUM">MASTERFIX AZOSPIRILUM</option>
-<option value="AGRIPON SOYBACTER">AGRIPON SOYBACTER</option>
-<option value="AGRIPON CLOCK EVOLUTION">AGRIPON CLOCK EVOLUTION</option>
-<option value="AGRIPON ALGORITIMO EXCELL">AGRIPON ALGORITIMO EXCELL</option>
+30 hectares
+    </pre>
 
-      <option value="">-- Selecione o produto --</option>
-      <!-- Aqui virão todos os produtos reais que você me passou -->
-    </select>
-    <input type="number" id="doseProduto" placeholder="Dose L/ha">
-    <button onclick="adicionarProduto()">Adicionar produto</button>
-    <div id="listaProdutos"></div>
+    <textarea id="entrada" rows="8" placeholder="Cole aqui o texto com fazenda, operação, talhões, produtos e doses, e a área total..."></textarea>
+
+    <div class="row" style="margin-top:12px">
+      <div>
+        <label class="meta">Área (ha) — opcional:</label>
+        <input id="areaInput" type="number" step="0.01" placeholder="Ex.: 30">
+      </div>
+      <div>
+        <label class="meta">Título opcional do resumo:</label>
+        <input id="tituloInput" type="text" placeholder="Ex.: Dessecação Pré-Plantio">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button onclick="calcular()">Calcular</button>
+      <button class="secondary" onclick="copiarResumo()">Copiar resumo</button>
+      <!-- Adicione este botão onde estão os botões de ação -->
+<button onclick="compartilharImagemWhatsApp()">Compartilhar imagem WhatsApp</button>
+      <button class="secondary" onclick="baixarPDF()">Baixar PDF</button>
+    </div>
+
+    <div id="resumo" class="result"></div>
   </div>
+</div>
 
-  <div class="resultado" id="resultado"></div>
-  <script>
-    const dados = {
-      karoline: {
-        "Pivô 1": 85, "Pivô 2": 120, "T_1": 37, "T_2": 46.6, "T_3": 64.3, "T_4": 37.6,
-        "T_5": 103.8, "T_6": 7.6, "T_7": 25.6, "T_8": 9.3, "T_9": 33.8, "T_10": 11,
-        "T_11": 64.8, "T_12": 33.8, "T_13": 41.1, "T_14": 59.5, "T_15": 92, "T_16": 67.6,
-        "T_17": 76.2, "T_18": 45, "T_19": 100, "T_20": 33.9, "T_21": 33.2, "T_22": 253.2,
-        "T_23": 20.2, "T_24": 102.4, "T_25": 33.9, "T_26": 30.4
-      },
-      talisma: {
-        "T_1": 311.3, "T_2": 53.1, "T_3": 44.2, "T_4": 43.5, "T_5": 49.0, "T_6": 12.4,
-        "T_7": 17.2, "T_8": 27.3, "T_9": 53.6, "T_10": 128.3, "T_11": 52.2, "T_12": 42.1,
-        "T_13": 38.6, "T_14": 20.8, "T_15": 215.8, "T_16": 30.1, "T_17": 31.4, "T_18": 31.4,
-        "T_19": 32.2, "T_20": 71.9, "T_21": 136.0
+<footer>Gerado localmente — salve como index.html e abra no navegador.</footer>
+
+<script>
+/* Conversão de unidades para base: volume=L, massa=kg */
+const unitToBase = {
+  "l": v => v, "lt": v => v, "litro": v => v, "litros": v => v, "ml": v => v/1000,
+  "kg": v => v, "g": v => v/1000, "gr": v => v/1000
+};
+const unitKind = {
+  "l":"volume","lt":"volume","litro":"volume","litros":"volume","ml":"volume",
+  "kg":"mass","g":"mass","gr":"mass"
+};
+function formatQty(value, kind){
+  if (kind === "volume") return value >= 1 ? `${value.toFixed(2)} L` : `${(value*1000).toFixed(0)} ml`;
+  if (kind === "mass")   return value >= 1 ? `${value.toFixed(2)} kg` : `${(value*1000).toFixed(0)} g`;
+  return `${value.toFixed(2)} (un)`;
+}
+
+/* Detecta área dentro do texto (30 ha, 30 hectares) */
+function detectArea(text){
+  const re = /(\d+(?:[.,]\d+)?)\s*(ha|hectare|hectares)\b/i;
+  const m = text.match(re);
+  return m ? parseFloat(m[1].replace(',','.')) : null;
+}
+
+/* Extrai metadados simples */
+function parseMeta(text){
+  const oneLine = s => s ? s.trim().replace(/\s+/g,' ') : null;
+  const fazenda = (text.match(/fazenda\s*([^\n]+)/i)||[])[1];
+  const operacao = (text.match(/dessecação|dessecacao|operação|operacao\s*([^\n]+)/i)||[])[1];
+  const talhoesMatch = text.match(/talh(ões|oes|ao)\s*([^\n]+)/i);
+  const talhoes = talhoesMatch ? talhoesMatch[2].replace(/`\(.*?\)`/g,'').trim() : null;
+  return { fazenda: oneLine(fazenda), operacao: oneLine(operacao), talhoes: oneLine(talhoes) };
+}
+
+/* Parser robusto de produtos: pega 'Nome 50 ml' em linhas ou trechos */
+function parseProducts(text){
+  const chunks = text.split(/\n/).map(s=>s.trim()).filter(Boolean);
+  const items = [];
+  const doseRegex = /(.+?)\s+([\d]+(?:[.,]\d+)?)\s*(ml|l|lt|litro|litros|g|gr|kg)\b/i;
+
+  chunks.forEach(line=>{
+    const m = line.match(doseRegex);
+    if (!m) return;
+    const name = m[1].trim().replace(/[.\-–:]+$/,'');
+    const val = parseFloat(m[2].replace(',','.'));
+    const unit = m[3].toLowerCase();
+
+    const kind = unitKind[unit] || "volume";
+    const toBase = unitToBase[unit] || (v=>v);
+    const dosePerHa = toBase(val);
+
+    // ignora linhas que claramente não são produto (mas sem bloquear produtos com acentos)
+    if (/^(fazenda|talh(ões|oes|ao)|área|area|dessecação|dessecacao|operação|operacao)$/i.test(name)) return;
+
+    items.push({ name, dosePerHa, kind, unit });
+  });
+  return items;
+}
+
+/* Cálculo dos totais */
+function calcularTotais(items, area){
+  return items.map(it=>{
+    const total = it.dosePerHa * area;
+    return { ...it, totalFormatted: formatQty(total, it.kind) };
+  });
+}
+
+/* Render do resumo */
+function renderResumo(meta, area, lista, tituloOptional){
+  const titulo = tituloOptional || (meta.operacao || "Resumo da mistura");
+  const fazenda = meta.fazenda ? `<span class="badge">Fazenda: ${meta.fazenda}</span>` : "";
+  const talhoes = meta.talhoes ? `<span class="badge">Talhões: ${meta.talhoes}</span>` : "";
+  const areaTag = `<span class="badge">Área: ${area} ha</span>`;
+
+  let html = `
+    <div class="summaryTitle">✅ ${titulo} — ${area} ha</div>
+    <div style="margin-bottom:10px">${fazenda}${talhoes}${areaTag}</div>
+    <table><thead><tr><th>Produto</th><th>Quantidade total</th></tr></thead><tbody>
+  `;
+  lista.forEach(r=>{ html += `<tr><td>${r.name}</td><td>${r.totalFormatted}</td></tr>`; });
+  html += `</tbody></table>`;
+  document.getElementById('resumo').innerHTML = html;
+}
+
+/* Fluxo principal */
+function calcular(){
+  const texto = document.getElementById('entrada').value;
+  const areaInput = parseFloat(document.getElementById('areaInput').value);
+  const areaDetected = detectArea(texto);
+  const area = !isNaN(areaInput) && areaInput > 0 ? areaInput : (areaDetected || 0);
+
+  if (!texto.trim()){ alert("Cole o texto da receita."); return; }
+  if (!area){ alert("Informe a área (ha) no texto (ex.: '30 hectares') ou no campo ao lado."); return; }
+
+  const meta = parseMeta(texto);
+  const items = parseProducts(texto);
+  if (!items.length){
+    alert("Não encontrei produtos/doses. Use linhas no formato: 'Nome 50 ml' ou 'Nome 600 gr'.");
+    return;
+  }
+  const totais = calcularTotais(items, area);
+  renderResumo(meta, area, totais, document.getElementById('tituloInput').value);
+}
+
+/* Copiar resumo (texto) */
+function copiarResumo(){
+  const el = document.getElementById('resumo');
+  if(!el.innerHTML){ alert("Calcule primeiro."); return; }
+
+  // pega todas as linhas da tabela
+  const rows = el.querySelectorAll("tbody tr");
+  let texto = "";
+
+  rows.forEach(r=>{
+    const produto = r.children[0].innerText.trim();
+    const qtd = r.children[1].innerText.trim();
+    texto += `${produto} - ${qtd}\n`;
+  });
+
+  navigator.clipboard.writeText(texto.trim()).then(()=>alert("Resumo copiado com traço entre produto e quantidade."));
+}
+
+
+/* WhatsApp */
+// Adicione esta função dentro da <script> do seu HTML
+function compartilharImagemWhatsApp(){
+  const el = document.getElementById('resumo');
+  if(!el){ alert("Calcule primeiro."); return; }
+
+  html2canvas(el).then(canvas => {
+    canvas.toBlob(blob => {
+      const file = new File([blob], "resumo.png", { type: "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({
+          files: [file],
+          title: "Resumo da Mistura",
+          text: "Confira o resumo da mistura para aplicação",
+        });
+      } else {
+        alert("Seu navegador não suporta compartilhamento de imagem. Use celular Android ou iPhone.");
       }
-    };
-
-    let talhoesSelecionados = [];
-    let produtos = [];
-
-    function mostrarTalhoes() {
-      const fazenda = document.getElementById("fazenda").value;
-      const div = document.getElementById("talhoes");
-      div.innerHTML = "";
-      talhoesSelecionados = [];
-
-      if (!fazenda) return;
-
-      for (const [nome, ha] of Object.entries(dados[fazenda])) {
-        const btn = document.createElement("div");
-        btn.className = "botao-talhao";
-        btn.innerHTML = `<strong>${nome}</strong><div class="hectare-info">${ha} ha</div>`;
-        btn.onclick = () => {
-          if (talhoesSelecionados.includes(nome)) {
-            talhoesSelecionados = talhoesSelecionados.filter(t => t !== nome);
-            btn.classList.remove("selecionado");
-          } else {
-            talhoesSelecionados.push(nome);
-            btn.classList.add("selecionado");
-          }
-          calcular();
-        };
-        div.appendChild(btn);
-      }
-    }
-
-    function adicionarProduto() {
-      const nome = document.getElementById("produtoSelect").value;
-      const dose = parseFloat(document.getElementById("doseProduto").value);
-      if (!nome || isNaN(dose)) return;
-
-      if (produtos.length >= 10) {
-        alert("Limite de 10 produtos atingido.");
-        return;
-      }
-
-      produtos.push({ nome, dose });
-      atualizarListaProdutos();
-      calcular();
-    }
-
-    function removerProduto(index) {
-      produtos.splice(index, 1);
-      atualizarListaProdutos();
-      calcular();
-    }
-
-    function atualizarListaProdutos() {
-      const div = document.getElementById("listaProdutos");
-      div.innerHTML = "";
-      produtos.forEach((p, i) => {
-        const item = document.createElement("div");
-        item.className = "produto-item";
-        item.innerHTML = `${p.nome} - ${p.dose} L/ha <button onclick="removerProduto(${i})">Remover</button>`;
-        div.appendChild(item);
-      });
-    }
-
-    function calcular() {
-      const fazenda = document.getElementById("fazenda").value;
-      if (!fazenda || talhoesSelecionados.length === 0 || produtos.length === 0) {
-        document.getElementById("resultado").innerHTML = "";
-        return;
-      }
-
-      let areaTotal = 0;
-      talhoesSelecionados.forEach(t => {
-        areaTotal += dados[fazenda][t];
-      });
-
-      let html = `<h2>📊 Resultado</h2>`;
-      html += `<p>Área total selecionada: <strong>${areaTotal.toFixed(2)} ha</strong></p>`;
-
-      produtos.forEach(p => {
-  const volume = p.dose * areaTotal;
-  html += `<p><strong>${p.nome}</strong>: ${volume.toFixed(2)} L</p>`;
-});
+    });
+  });
+}
 
 
-      document.getElementById("resultado").innerHTML = html;
-    }
-  </script>
+/* PDF (impressão) */
+function baixarPDF(){
+  const el = document.getElementById('resumo');
+  if(!el.innerHTML){ alert("Calcule primeiro."); return; }
+  const w = window.open("", "_blank");
+  w.document.write(`
+    <html><head><title>Resumo da mistura</title>
+      <style>
+        body{font-family:Arial,sans-serif;padding:20px}
+        h2{margin:0 0 12px 0}
+        table{width:100%;border-collapse:collapse}
+        th,td{border:1px solid #ddd;padding:8px;text-align:left}
+        th{background:#f2f2f2}
+      </style>
+    </head><body>
+      <h2>Resumo da mistura</h2>
+      ${el.innerHTML}
+    </body></html>
+  `);
+  w.document.close(); w.focus(); w.print();
+}
+</script>
 </body>
 </html>
