@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mural de Trabalho - Agro Vision</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; background:black; margin:0; color:#1f2a37; }
+    header { background:green; border-bottom:1px solid #ddd; padding:12px 16px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:10; }
+    header .menu-btn { font-size:24px; cursor:pointer; background:none; border:none; }
+    header .title { font-size:18px; font-weight:600; }
+
+    .sidebar { height:100%; width:0; position:fixed; top:0; left:0; background:#fff; border-right:1px solid #ddd;
+               overflow-x:hidden; transition:0.3s; padding-top:60px; z-index:20; }
+    .sidebar a { padding:12px 18px; text-decoration:none; font-size:16px; color:#333; display:block; border-bottom:1px solid #eee; }
+    .sidebar a:hover { background:#f3f4f6; }
+
+    .container { max-width:900px; margin:16px auto; padding:0 12px; }
+    .card { background:#fff; border:1px solid #ddd; border-radius:10px; padding:14px; margin-bottom:14px; }
+    .hidden { display:none; }
+    label { font-size:13px; color:#6b7280; }
+    input[type="date"], textarea { width:100%; border:1px solid #ddd; border-radius:8px; padding:10px; font-size:15px; margin-top:6px; background:#fff; }
+    textarea { min-height:140px; }
+    .btn { background:#1263ff; color:#fff; border:none; border-radius:8px; padding:12px; font-size:16px; cursor:pointer; width:100%; margin-top:10px; }
+    .btn.secondary { background:#6b7280; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border:1px solid #ddd; padding:8px; text-align:left; }
+    th { background:#f3f4f6; }
+    .observacoes { margin-top:10px; font-size:14px; }
+    @media (max-width:600px) {
+      input[type="date"], textarea { font-size:16px; }
+      .btn { font-size:16px; padding:12px; }
+    }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+
+  .fundo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('lavoura.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* 30% visível */
+    z-index: -1;
+  }
+</style>
+  </style>
+</head>
+<body>
+<div class="fundo"></div>
+
+  <!-- Seu conteúdo de login aqui -->
+  <header>
+    <button class="menu-btn" onclick="openMenu()">☰</button>
+    <div class="title">Mural de Trabalho - Agro Vision</div>
+  </header>
+
+  <!-- Sidebar -->
+  <nav id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" onclick="showSection('nova')">➕ Nova Receita</a>
+    <a href="javascript:void(0)" onclick="showSection('pendentes')">📌 Receitas Pendentes</a>
+    <a href="javascript:void(0)" onclick="showSection('historico')">📜 Histórico de Concluídas</a>
+    <a href="javascript:void(0)" onclick="closeMenu()">❌ Fechar</a>
+  </nav>
+
+  <main class="container">
+    <!-- Nova Receita -->
+    <section id="section-nova" class="card">
+      <h2>Nova Receita</h2>
+      <form id="form-receita">
+        <label>Data:</label>
+        <input type="date" id="data" required>
+        <label style="margin-top:10px;">Receita (cole no formato completo)</label>
+        <textarea id="texto" placeholder="Cole aqui a receita..." required></textarea>
+        <button type="submit" class="btn">Adicionar Receita</button>
+      </form>
+    </section>
+
+    <!-- Pendentes -->
+    <section id="section-pendentes" class="card hidden">
+      <h2>Receitas Pendentes</h2>
+      <div id="mural"></div>
+    </section>
+
+    <!-- Histórico -->
+    <section id="section-historico" class="card hidden">
+      <h2>Histórico de Receitas Concluídas</h2>
+      <button class="btn secondary" onclick="limparHistorico()">🗑️ Limpar Histórico</button>
+      <div id="historico"></div>
+    </section>
+  </main>
+
+  <!-- Firebase + App -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD62fPpXYW4T-niex4aPR9Q-Crz_erWPDg",
+      authDomain: "usuarios-eaa3b.firebaseapp.com",
+      databaseURL: "https://usuarios-eaa3b-default-rtdb.firebaseio.com",
+      projectId: "usuarios-eaa3b",
+      storageBucket: "usuarios-eaa3b.firebasestorage.app",
+      messagingSenderId: "1077971782430",
+      appId: "1:1077971782430:web:c0ddb52757d4ed020d170f",
+      measurementId: "G-438YDXGPCQ"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Menu lateral
+    window.openMenu = () => document.getElementById("sidebar").style.width = "250px";
+    window.closeMenu = () => document.getElementById("sidebar").style.width = "0";
+    window.showSection = (key) => {
+      ["nova","pendentes","historico"].forEach(k => {
+        document.getElementById("section-"+k).classList.add("hidden");
+      });
+      document.getElementById("section-"+key).classList.remove("hidden");
+      closeMenu();
+    };
+
+    // Parser da receita
+    function parseReceita(texto) {
+      const linhas = texto.split("\n").map(l => l.trim()).filter(Boolean);
+      const lower = s => (s||"").toLowerCase();
+
+      const fazenda = linhas[0] || "";
+      const pulverizacao = linhas[1] || "";
+      const talhoes = linhas.find(l => lower(l).includes("talhoes")) || "";
+
+      const startIndex = linhas.findIndex(l => lower(l).includes("produto"));
+      const produtos = [];
+      if (startIndex !== -1) {
+        for (let i = startIndex+1; i < linhas.length; i++) {
+          const linha = linhas[i];
+          if (!linha) continue;
+          let partes = linha.split(/\s{2,}/).map(s => s.trim()).filter(Boolean);
+          if (partes.length < 2) {
+            const m = linha.match(/(.+?)\s+(\d+\s*(ml|gr|lt|kg|l|g))/i);
+            if (m) partes = [m[1].replace(/\.+$/,"").trim(), m[2].trim()];
+          }
+          if (partes.length >= 2) {
+            produtos.push({ produto: partes[0].replace(/\.+$/,""), dose: partes.slice(1).join(" ") });
+          }
+        }
+      }
+      return { fazenda, pulverizacao, talhoes, produtos };
+    }
+
+    // Form e ações
+    const form = document.getElementById("form-receita");
+    const muralEl = document.getElementById("mural");
+    const historicoEl = document.getElementById("historico");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = document.getElementById("data").value;
+      const texto = document.getElementById("texto").value.trim();
+      if (!data || !texto) return;
+
+      const parsed = parseReceita(texto);
+      const receita = { data, texto, parsed, status: "pendente", observacoes: [] };
+      try {
+        await push(ref(db, "receitas"), receita);
+        form.reset();
+        showSection("pendentes");
+      } catch (err) {
+        alert("Erro ao salvar receita.");
+        console.error(err);
+      }
+    });
+
+    // Renderizar pendentes e histórico
+    onValue(ref(db, "receitas"), (snapshot) => {
+      const data = snapshot.val() || {};
+      muralEl.innerHTML = "";
+      historicoEl.innerHTML = "";
+
+      Object.entries(data).forEach(([id, receita]) => {
+        const p = receita.parsed || { produtos: [] };
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const base = `
+          <div style="font-weight:600; font-size:16px;">${p.fazenda || ""}</div>
+          <div><b>Pulverização:</b> ${p.pulverizacao || ""}</div>
+          <div><b>${p.talhoes || ""}</b></div>
+          <div><b>Data:</b> ${receita.data}</div>
+          <table>
+            <tr><th>Produto</th><th>Dose</th></tr>
+            ${(p.produtos || []).map(r => `<tr><td>${r.produto}</td><td>${r.dose}</td></tr>`).join("")}
+          </table>
+          <div class="observacoes"><b>Observações:</b>
+            <ul>${(receita.observacoes || []).map(o => `<li>${o}</li>`).join("")}</ul>
+        `;
+
+        if (receita.status === "pendente") {
+          card.innerHTML = base + `
+            <textarea id="obs-${id}" placeholder="Adicionar observação..."></textarea>
+            <button class="btn" onclick="adicionarObs('${id}')">Salvar observação</button>
+            <button class="btn secondary" onclick="concluirReceita('${id}')">Concluir receita</button>
+          </div>`;
+          muralEl.appendChild(card);
+        } else if (receita.status === "concluida") {
+          card.innerHTML = base + `</div>`;
+          historicoEl.appendChild(card);
+        }
+      });
+    });
+
+    // Observações e concluir
+    window.adicionarObs = async (id) => {
+      const input = document.getElementById(`obs-${id}`);
+      const texto = input.value.trim();
+      if (!texto) return;
+      try {
+        const snap = await new Promise(resolve => onValue(ref(db, `receitas/${id}/observacoes`), resolve, { onlyOnce: true }));
+        const obs = snap.val() || [];
+        obs.push(texto);
+        await update(ref(db, `receitas/${id}`), { observacoes: obs });
+        input.value = "";
+      } catch (err) {
+        alert("Erro ao salvar observação.");
+        console.error(err);
+      }
+    };
+
+    window.concluirReceita = async (id) => {
+      if (confirm("Tem certeza que deseja concluir esta receita?")) {
+        try {
+          await update(ref(db, `receitas/${id}`), { status: "concluida" });
+        } catch (err) {
+          alert("Erro ao concluir receita.");
+          console.error(err);
+        }
+      }
+    };
+
+    // Limpar histórico (remove todas concluídas)
+    window.limparHistorico = async () => {
+      if (!confirm("Tem certeza que deseja limpar todo o histórico de receitas concluídas?")) return;
+      try {
+        const snap = await new Promise(resolve => onValue(ref(db, "receitas"), resolve, { onlyOnce: true }));
+        const data = snap.val() || {};
+        const ops = [];
+        for (const [id, receita] of Object.entries(data)) {
+          if (receita.status === "concluida") {
+            ops.push(remove(ref(db, "receitas/" + id)));
+          }
+        }
+        await Promise.all(ops);
+        alert("Histórico limpo com sucesso!");
+      } catch (err) {
+        alert("Erro ao limpar histórico.");
+        console.error(err);
+      }
+    };
+
+    // Abre Pendentes por padrão
+    showSection("pendentes");
+  </script>
+</body>
+</html>
