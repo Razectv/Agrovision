@@ -31,6 +31,14 @@
       input[type="date"], textarea { font-size:16px; }
       .btn { font-size:16px; padding:12px; }
     }
+.btn.small {
+  background:#10b981; /* verde */
+  font-size:13px;
+  padding:6px 10px;
+  width:auto;
+  margin-bottom:8px;
+}
+
 <style>
   body {
     margin: 0;
@@ -206,6 +214,7 @@
         if (receita.status === "pendente") {
           card.innerHTML = base + `
             <textarea id="obs-${id}" placeholder="Adicionar observação..."></textarea>
+<button class="btn small" onclick="copiarReceita('${id}')">📋 Copiar Receita</button>
             <button class="btn" onclick="adicionarObs('${id}')">Salvar observação</button>
             <button class="btn secondary" onclick="concluirReceita('${id}')">Concluir receita</button>
           </div>`;
@@ -216,6 +225,30 @@
         }
       });
     });
+window.copiarReceita = async (id) => {
+  try {
+    const snap = await new Promise(resolve => 
+      onValue(ref(db, "receitas/" + id), resolve, { onlyOnce: true })
+    );
+    const receita = snap.val();
+    if (!receita) return;
+
+    const p = receita.parsed || {};
+    let texto = `${p.fazenda || ""}\n${p.pulverizacao || ""}\n${p.talhoes || ""}\nData: ${receita.data}\n\nProduto\tDose\n`;
+    (p.produtos || []).forEach(r => {
+      texto += `${r.produto}\t${r.dose}\n`;
+    });
+    if (receita.observacoes && receita.observacoes.length) {
+      texto += `\nObservações:\n${receita.observacoes.map(o => "- "+o).join("\n")}`;
+    }
+
+    await navigator.clipboard.writeText(texto);
+    alert("Receita copiada para a área de transferência!");
+  } catch (err) {
+    alert("Erro ao copiar receita.");
+    console.error(err);
+  }
+};
 
     // Observações e concluir
     window.adicionarObs = async (id) => {
