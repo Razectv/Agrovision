@@ -198,60 +198,67 @@
     });
 
     function carregarRegistros() {
-      const lista = document.getElementById("listaRegistros");
-      const filtroInput = document.getElementById("filtroOperador");
+  const lista = document.getElementById("listaRegistros");
+  const filtroInput = document.getElementById("filtroOperador");
 
-      function atualizarLista(snapshot) {
-        lista.innerHTML = "";
+  function atualizarLista(snapshot) {
+    lista.innerHTML = "";
 
-        if (!snapshot.exists()) {
-          lista.innerHTML = "<p class='loading'>⚠️ Nenhum registro encontrado.</p>";
-          return;
-        }
+    if (!snapshot.exists()) {
+      lista.innerHTML = "<p class='loading'>⚠️ Nenhum registro encontrado.</p>";
+      return;
+    }
 
-        const filtro = filtroInput.value.toLowerCase();
+    const filtro = filtroInput.value.toLowerCase();
 
-        snapshot.forEach(function(childSnapshot) {
-          const registro = childSnapshot.val();
-          const registroId = childSnapshot.key;
+    snapshot.forEach(function(childSnapshot) {
+      const registro = childSnapshot.val();
+      const registroId = childSnapshot.key;
 
-          if (filtro && !registro.operador.toLowerCase().includes(filtro)) return;
-
-          const item = document.createElement("div");
-          item.className = "registro";
-
-          const content = document.createElement("div");
-          content.className = "registro-content";
-          content.innerHTML = `
-            <div><strong>👤 Operador:</strong> ${registro.operador}</div>
-            <div><strong>📅 Data:</strong> ${registro.data_aplicacao}</div>
-            <div><strong>🌱 Talhão:</strong> ${registro.talhao}</div>
-            <div><strong>🧪 Tipo:</strong> ${registro.tipo}</div>
-            <div><strong>🏡 Fazenda:</strong> ${registro.fazenda}</div>
-          `;
-
-          const btn = document.createElement("button");
-          btn.className = "btn-apagar";
-          btn.innerHTML = "🗑️";
-          btn.title = "Apagar registro";
-          btn.onclick = () => {
-  const confirmar = confirm("🗑️ Tem certeza que deseja apagar este registro?");
-if (confirmar) {
-  apagarRegistro(registroId);
-}
-};
-
-          item.appendChild(content);
-          item.appendChild(btn);
-          lista.appendChild(item);
-        });
+      // 🔍 agora a mesma barra pesquisa tanto operador quanto data
+      if (filtro) {
+        const operadorMatch = registro.operador.toLowerCase().includes(filtro);
+        const dataMatch = registro.data_aplicacao.toLowerCase().includes(filtro);
+        if (!operadorMatch && !dataMatch) return;
       }
 
-      firebase.database().ref("pulverizacoes").on("value", atualizarLista);
-      filtroInput.addEventListener("input", () => {
-        firebase.database().ref("pulverizacoes").once("value").then(atualizarLista);
-      });
-    }
+      const item = document.createElement("div");
+      item.className = "registro";
+
+      const content = document.createElement("div");
+      content.className = "registro-content";
+      content.innerHTML = `
+        <div><strong>👤 Operador:</strong> ${registro.operador}</div>
+        <div><strong>📅 Data:</strong> ${registro.data_aplicacao}</div>
+        <div><strong>🌱 Talhão:</strong> ${registro.talhao}</div>
+        <div><strong>🧪 Tipo:</strong> ${registro.tipo}</div>
+        <div><strong>🏡 Fazenda:</strong> ${registro.fazenda}</div>
+      `;
+
+      const btn = document.createElement("button");
+      btn.className = "btn-apagar";
+      btn.innerHTML = "🗑️";
+      btn.title = "Apagar registro";
+      btn.onclick = () => {
+        const confirmar = confirm("🗑️ Tem certeza que deseja apagar este registro?");
+        if (confirmar) {
+          apagarRegistro(registroId);
+        }
+      };
+
+      item.appendChild(content);
+      item.appendChild(btn);
+      lista.appendChild(item);
+    });
+  }
+
+  // 🔧 aqui estavam faltando as linhas de fechamento
+  firebase.database().ref("pulverizacoes").on("value", atualizarLista);
+  filtroInput.addEventListener("input", () => {
+    firebase.database().ref("pulverizacoes").once("value").then(atualizarLista);
+  });
+}
+
 
     function apagarRegistro(id) {
       firebase.database().ref("pulverizacoes/" + id).remove()
