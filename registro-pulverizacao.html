@@ -268,6 +268,8 @@
 
     carregarRegistros();
 function exportarCSV() {
+  const filtro = document.getElementById("filtroOperador").value.toLowerCase();
+
   firebase.database().ref("pulverizacoes").once("value", function(snapshot) {
     if (!snapshot.exists()) {
       alert("Nenhum registro para exportar.");
@@ -278,6 +280,14 @@ function exportarCSV() {
 
     snapshot.forEach(function(childSnapshot) {
       const r = childSnapshot.val();
+
+      // aplica filtro único (operador OU data)
+      if (filtro) {
+        const operadorMatch = r.operador.toLowerCase().includes(filtro);
+        const dataMatch = r.data_aplicacao.toLowerCase().includes(filtro);
+        if (!operadorMatch && !dataMatch) return;
+      }
+
       csv += `"${r.operador}","${r.data_aplicacao}","${r.talhao}","${r.tipo}","${r.fazenda}"\n`;
     });
 
@@ -288,40 +298,7 @@ function exportarCSV() {
     link.click();
   });
 }
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("✅ Service Worker registrado"))
-    .catch(error => console.error("Erro ao registrar Service Worker:", error));
-}
-function gerarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
 
-  firebase.database().ref("pulverizacoes").once("value", function(snapshot) {
-    if (!snapshot.exists()) {
-      alert("Nenhum registro para gerar PDF.");
-      return;
-    }
-
-    let y = 10;
-    doc.setFontSize(12);
-    doc.text("Relatório de Pulverizações", 10, y);
-    y += 10;
-
-    snapshot.forEach(function(childSnapshot) {
-      const r = childSnapshot.val();
-      const linha = `Operador: ${r.operador} | Data: ${r.data_aplicacao} | Talhão: ${r.talhao} | Tipo: ${r.tipo} | Fazenda: ${r.fazenda}`;
-      doc.text(linha, 10, y);
-      y += 10;
-      if (y > 280) {
-        doc.addPage();
-        y = 10;
-      }
-    });
-
-    doc.save("relatorio_pulverizacao.pdf");
-  });
-}
 
   </script>
 </body>
